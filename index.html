@@ -717,8 +717,30 @@ function rollForward(d,freq,from){
   while(out<from && guard++<600){ out.setMonth(out.getMonth()+months); }
   return out;
 }
-function dueEvents(horizonDays){
+/* All occurrences of a recurring item between `from` and `until`. */
+function occurrences(first,freq,from,until){
+  var m={"Monthly":1,"Quarterly":3,"Half-yearly":6,"Yearly":12}[freq];
+  var step=function(d){
+    if(freq==="Weekly") d.setDate(d.getDate()+7);
+    else if(m) d.setMonth(d.getMonth()+m);
+    else return false;
+    return true;
+  };
+  var d=new Date(first.getTime()), out=[], guard=0;
+  while(d<from && guard++<900){ if(!step(d)) break; }
+  guard=0;
+  while(d<=until && guard++<900){ out.push(new Date(d.getTime())); if(!step(d)) break; }
+  if(!out.length) out.push(new Date(d.getTime()));
+  return out;
+}
+
+/* expand=true lists every instalment in the window, which is what a
+   "what must I pay this year" view needs. The .ics leaves it false and
+   lets RRULE do the repeating, so events are not duplicated. */
+function dueEvents(horizonDays,expand){
   var now=new Date(); now.setHours(0,0,0,0);
+  var lim=horizonDays?new Date(now.getTime()+horizonDays*86400000)
+                     :new Date(now.getFullYear()+5,now.getMonth(),now.getDate());
   var out=[];
   S.holdings.forEach(function(h){
     var def=TYPES[h.type]; if(!def) return;
@@ -727,10 +749,12 @@ function dueEvents(horizonDays){
     if((h.type==="lic"||h.type==="term") && h.nextDue && h.freq && h.freq!=="Single premium"){
       var d0=parseD(h.nextDue);
       if(d0){
-        var d=rollForward(d0,h.freq,now);
-        out.push({id:h.id,kind:"premium",title:label,
-          sub:h.freq+" premium"+(h.policyNo?" · "+h.policyNo:""),
-          date:d,amount:num(h.premium),recur:h.freq});
+        var ds=expand?occurrences(d0,h.freq,now,lim):[rollForward(d0,h.freq,now)];
+        ds.forEach(function(d){
+          out.push({id:h.id,kind:"premium",title:label,
+            sub:h.freq+" premium"+(h.policyNo?" · "+h.policyNo:""),
+            date:d,amount:num(h.premium),recur:h.freq});
+        });
         if(d0<now) out.push({id:h.id,kind:"premium",title:label,
           sub:"Overdue since "+fmtD(iso(d0)),date:d0,amount:num(h.premium),overdue:true});
       }
@@ -739,11 +763,15 @@ function dueEvents(horizonDays){
     if(h.type==="mf" && h.sipDay && h.mode!=="Lumpsum"){
       var day=Math.min(Math.max(parseInt(h.sipDay,10)||0,1),28);
       if(day){
+        var f=h.freq||"Monthly";
         var nd=new Date(now.getFullYear(),now.getMonth(),day);
         if(nd<now) nd.setMonth(nd.getMonth()+1);
-        out.push({id:h.id,kind:"sip",title:label,
-          sub:(h.freq||"Monthly")+" SIP"+(h.folio?" · "+h.folio:""),
-          date:nd,amount:num(h.sipAmt),recur:h.freq||"Monthly"});
+        var ds2=expand?occurrences(nd,f,now,lim):[nd];
+        ds2.forEach(function(d){
+          out.push({id:h.id,kind:"sip",title:label,
+            sub:f+" SIP"+(h.folio?" · "+h.folio:""),
+            date:d,amount:num(h.sipAmt),recur:f});
+        });
       }
     }
     /* maturities */
@@ -757,10 +785,7 @@ function dueEvents(horizonDays){
     });
   });
   out.sort(function(a,b){ return a.date-b.date; });
-  if(horizonDays){
-    var lim=new Date(now.getTime()+horizonDays*86400000);
-    out=out.filter(function(e){ return e.date<=lim; });
-  }
+  if(horizonDays) out=out.filter(function(e){ return e.date<=lim; });
   return out;
 }
 
@@ -855,7 +880,7 @@ function viewHome(){
   }
 
   /* Due soon */
-  var due=dueEvents(90);
+  var due=dueEvents(90,true);
   var head=el('<div class="section-head"><h2>Due soon</h2>'+
     '<span class="count">next 90 days</span>'+
     '<button class="act" type="button">All dates</button></div>');
@@ -1506,7 +1531,7 @@ function viewDue(){
 
   var horizonDays=route.arg?parseInt(route.arg,10):365;
   var chips=el('<div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap"></div>');
-  [[30,"30 days"],[90,"90 days"],[365,"1 year"],[0,"Everything"]].forEach(function(o){
+  [[30,"30 days"],[90,"90 days"],[365,"1 year"],[1095,"3 years"]].forEach(function(o){
     var on=horizonDays===o[0];
     var b=el('<button class="iconbtn" type="button"'+
       (on?' style="border-color:var(--accent);color:var(--accent);background:var(--accent-soft)"':"")+
@@ -1516,7 +1541,7 @@ function viewDue(){
   });
   view.appendChild(chips);
 
-  var evs=dueEvents(horizonDays||null);
+  var evs=dueEvents(horizonDays||null,true);
   if(!evs.length){
     view.appendChild(el('<div class="empty"><p>No dates in this window.</p></div>'));
   } else {
@@ -1555,7 +1580,7 @@ function buildICS(){
   var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Paisa Patra//Personal//EN",
          "CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:Investment due dates"];
   var stamp=icsDate(new Date())+"T090000Z";
-  dueEvents(0).forEach(function(e,i){
+  dueEvents(0,false).forEach(function(e,i){
     if(e.overdue) return;
     var rrule={"Monthly":"FREQ=MONTHLY","Quarterly":"FREQ=MONTHLY;INTERVAL=3",
                "Half-yearly":"FREQ=MONTHLY;INTERVAL=6","Yearly":"FREQ=YEARLY",
@@ -1586,7 +1611,9 @@ function viewYearSheet(){
   view.appendChild(back);
 
   var fy=fyOf(new Date()), r=fyRange(fy);
-  var evs=dueEvents(0).filter(function(e){ return e.date>=r[0]&&e.date<=r[1]; });
+  var today=new Date(); today.setHours(0,0,0,0);
+  var span=Math.max(daysBetween(today,r[1])+1,1);
+  var evs=dueEvents(span,true).filter(function(e){ return e.date>=r[0]&&e.date<=r[1]; });
 
   var paper=el('<div class="sheetpaper">'+
     '<div class="eyebrow">'+esc(fyLabel(fy))+" · 1 April "+fy+" to 31 March "+(fy+1)+"</div>"+
