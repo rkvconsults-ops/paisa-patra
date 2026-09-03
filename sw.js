@@ -1,0 +1,37 @@
+/* Paisa Patra offline cache.
+   Bump CACHE when index.html changes, or phones keep serving the old copy. */
+var CACHE = "paisa-patra-v1";
+var ASSETS = ["./", "./index.html", "./manifest.webmanifest",
+              "./icon-180.png", "./icon-192.png", "./icon-512.png"];
+
+self.addEventListener("install", function (e) {
+  self.skipWaiting();
+  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(ASSETS); }));
+});
+
+self.addEventListener("activate", function (e) {
+  e.waitUntil(
+    caches.keys().then(function (keys) {
+      return Promise.all(keys.map(function (k) {
+        return k === CACHE ? null : caches.delete(k);
+      }));
+    }).then(function () { return self.clients.claim(); })
+  );
+});
+
+/* Network first so a redeploy is picked up, cache fallback so a tunnel or
+   aeroplane mode still opens the app. */
+self.addEventListener("fetch", function (e) {
+  if (e.request.method !== "GET") return;
+  e.respondWith(
+    fetch(e.request).then(function (res) {
+      var copy = res.clone();
+      caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
+      return res;
+    }).catch(function () {
+      return caches.match(e.request).then(function (hit) {
+        return hit || caches.match("./index.html");
+      });
+    })
+  );
+});

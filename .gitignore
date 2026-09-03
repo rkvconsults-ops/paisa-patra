@@ -1,0 +1,5 @@
+# Your exported data never belongs in a public repo.
+backups/
+*.json
+!manifest.webmanifest
+.DS_Store

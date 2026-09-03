@@ -1,0 +1,2152 @@
+<title>Paisa Patra</title>
+<style>
+:root{
+  --paper:#F6F8FB;
+  --surface:#FFFFFF;
+  --surface-2:#EDF1F7;
+  --sunk:#E4EAF3;
+  --ink:#131A25;
+  --ink-2:#4B5769;
+  --ink-3:#7B8799;
+  --rule:#DCE3ED;
+  --rule-strong:#C3CDDC;
+  --accent:#1B3A6B;
+  --accent-2:#2F5FA8;
+  --accent-soft:#E5EDF9;
+  --gain:#1B6B4A;
+  --gain-soft:#E2F1EA;
+  --loss:#9E2B2B;
+  --loss-soft:#F8E7E7;
+  --warn:#7E5510;
+  --warn-soft:#FAEFD9;
+  --on-accent:#FFFFFF;
+  --band-bg:#1B3A6B;
+  --band-fg:#FFFFFF;
+  --band-cell:#1B3A6B;
+  --band-rule:rgba(255,255,255,.18);
+  --shadow:0 1px 2px rgba(19,26,37,.06),0 8px 24px -12px rgba(19,26,37,.18);
+  --serif:ui-serif,"New York",Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E141C;
+    --surface:#161E28;
+    --surface-2:#1D2733;
+    --sunk:#111922;
+    --ink:#E9EEF5;
+    --ink-2:#A8B5C6;
+    --ink-3:#7A8799;
+    --rule:#27323F;
+    --rule-strong:#3A4756;
+    --accent:#83ACE9;
+    --accent-2:#A6C5F2;
+    --accent-soft:#182534;
+    --gain:#5CC291;
+    --gain-soft:#16281F;
+    --loss:#E98D8D;
+    --loss-soft:#2B1919;
+    --warn:#DCA954;
+    --warn-soft:#2A2114;
+    --on-accent:#0E141C;
+    --band-bg:linear-gradient(160deg,#1D3049,#131C27);
+    --band-fg:#E9EEF5;
+    --band-cell:#131C27;
+    --band-rule:#2B3745;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E141C;--surface:#161E28;--surface-2:#1D2733;--sunk:#111922;
+  --ink:#E9EEF5;--ink-2:#A8B5C6;--ink-3:#7A8799;--rule:#27323F;--rule-strong:#3A4756;
+  --accent:#83ACE9;--accent-2:#A6C5F2;--accent-soft:#182534;
+  --gain:#5CC291;--gain-soft:#16281F;--loss:#E98D8D;--loss-soft:#2B1919;
+  --warn:#DCA954;--warn-soft:#2A2114;
+  --on-accent:#0E141C;--band-bg:linear-gradient(160deg,#1D3049,#131C27);
+  --band-fg:#E9EEF5;--band-cell:#131C27;--band-rule:#2B3745;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.5;
+  -webkit-text-size-adjust:100%;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+h1,h2,h3{font-family:var(--serif);font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;border-radius:3px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- shell ---------- */
+.app{max-width:760px;margin:0 auto;min-height:100vh;background:var(--paper)}
+.topbar{
+  position:sticky;top:0;z-index:40;
+  background:var(--surface);border-bottom:1px solid var(--rule);
+  padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;
+  display:flex;align-items:center;gap:12px;
+}
+.mark{
+  width:30px;height:30px;flex:none;border-radius:6px;
+  background:var(--accent);color:var(--on-accent);
+  display:grid;place-items:center;font-family:var(--serif);font-weight:700;font-size:15px;
+}
+.brand{font-family:var(--serif);font-size:17px;font-weight:600;line-height:1.1}
+.brand small{display:block;font-family:var(--sans);font-size:10.5px;font-weight:500;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin-top:2px}
+.topbar .spacer{flex:1}
+.iconbtn{
+  background:none;border:1px solid var(--rule);border-radius:6px;
+  padding:6px 10px;font-size:12.5px;font-weight:500;color:var(--ink-2);cursor:pointer
+}
+.iconbtn:hover{border-color:var(--rule-strong);color:var(--ink)}
+
+.view{padding:18px 16px 96px}
+.tabbar{
+  position:fixed;bottom:0;left:0;right:0;z-index:40;
+  background:var(--surface);border-top:1px solid var(--rule);
+  display:grid;grid-template-columns:repeat(5,1fr);
+  padding-bottom:env(safe-area-inset-bottom);
+  max-width:760px;margin:0 auto;
+}
+.tabbar button{
+  background:none;border:0;padding:9px 2px 10px;cursor:pointer;
+  font-size:10.5px;font-weight:500;letter-spacing:.02em;color:var(--ink-3);
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  border-top:2px solid transparent;margin-top:-1px;
+}
+.tabbar button.on{color:var(--accent);border-top-color:var(--accent)}
+.tabbar svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- type utilities ---------- */
+.eyebrow{font-size:10.5px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3)}
+.section-head{display:flex;align-items:baseline;gap:10px;margin:26px 0 10px}
+.section-head:first-child{margin-top:0}
+.section-head h2{font-size:19px}
+.section-head .count{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+.section-head .act{margin-left:auto;font-size:12.5px;font-weight:500;color:var(--accent);
+  background:none;border:0;cursor:pointer;padding:2px 0}
+.muted{color:var(--ink-2)}
+.dim{color:var(--ink-3)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.pos{color:var(--gain)}
+.neg{color:var(--loss)}
+.note{font-size:12.5px;line-height:1.55;color:var(--ink-2)}
+
+/* ---------- summary band ---------- */
+.band{
+  background:var(--band-bg);border-radius:10px;padding:18px 18px 16px;color:var(--band-fg);
+  box-shadow:var(--shadow);
+}
+.band .lbl{font-size:10.5px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;opacity:.72}
+.band .big{font-family:var(--mono);font-size:31px;font-weight:500;letter-spacing:-.02em;
+  margin-top:4px;font-variant-numeric:tabular-nums;line-height:1.1}
+.band .sub{margin-top:3px;font-size:13px;opacity:.85}
+.bandgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:16px;
+  background:var(--band-rule);border-radius:7px;overflow:hidden}
+.bandgrid div{background:var(--band-cell);padding:10px 12px}
+.bandgrid .v{font-family:var(--mono);font-size:15px;margin-top:2px;font-variant-numeric:tabular-nums}
+
+/* ---------- ledger rows (passbook feel, not cards) ---------- */
+.ledger{border-top:1px solid var(--rule-strong);margin-top:2px}
+.row{
+  display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;
+  padding:12px 2px;border-bottom:1px solid var(--rule);
+  background:none;border-left:0;border-right:0;border-top:0;cursor:pointer;
+}
+.row:hover{background:var(--surface-2)}
+.row .glyph{
+  width:30px;height:30px;flex:none;border-radius:5px;margin-top:1px;
+  background:var(--accent-soft);color:var(--accent);
+  display:grid;place-items:center;font-family:var(--mono);font-size:10.5px;font-weight:600
+}
+.row .mid{flex:1;min-width:0}
+.row .t{font-weight:600;font-size:14.5px;line-height:1.3;overflow-wrap:anywhere}
+.row .s{font-size:12px;color:var(--ink-3);margin-top:2px;overflow-wrap:anywhere}
+.row .end{text-align:right;flex:none}
+.row .end .v{font-family:var(--mono);font-size:14.5px;font-variant-numeric:tabular-nums}
+.row .end .d{font-family:var(--mono);font-size:11.5px;margin-top:2px;font-variant-numeric:tabular-nums}
+
+.pill{
+  display:inline-block;padding:1.5px 7px;border-radius:3px;font-size:10.5px;
+  font-weight:600;letter-spacing:.04em;text-transform:uppercase;vertical-align:1px
+}
+.pill.due{background:var(--warn-soft);color:var(--warn)}
+.pill.over{background:var(--loss-soft);color:var(--loss)}
+.pill.ok{background:var(--gain-soft);color:var(--gain)}
+.pill.flat{background:var(--surface-2);color:var(--ink-2)}
+
+/* due-soon: the one place that earns a lifted treatment */
+.duewrap{background:var(--surface);border:1px solid var(--rule);border-radius:9px;
+  overflow:hidden;box-shadow:var(--shadow)}
+.duerow{display:flex;gap:11px;align-items:center;padding:11px 13px;
+  border-bottom:1px solid var(--rule);border-left:3px solid var(--rule-strong);
+  width:100%;background:none;border-top:0;border-right:0;text-align:left;cursor:pointer}
+.duerow:last-child{border-bottom:0}
+.duerow.warn{border-left-color:var(--warn)}
+.duerow.over{border-left-color:var(--loss)}
+.duerow.calm{border-left-color:var(--accent-2)}
+.duerow:hover{background:var(--surface-2)}
+.duerow .mid{flex:1;min-width:0}
+.duerow .t{font-weight:600;font-size:14px}
+.duerow .s{font-size:11.5px;color:var(--ink-3);margin-top:1px}
+.duerow .end{text-align:right;font-family:var(--mono);font-size:12.5px;flex:none;
+  font-variant-numeric:tabular-nums}
+
+/* ---------- goals ---------- */
+.goal{padding:14px 0;border-bottom:1px solid var(--rule)}
+.goal .gh{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.goal .gn{font-weight:600;font-size:14.5px}
+.goal .gt{font-family:var(--mono);font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.bar{height:7px;background:var(--sunk);border-radius:4px;margin-top:9px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent-2);border-radius:4px}
+.bar i.done{background:var(--gain)}
+.goal .gf{display:flex;justify-content:space-between;margin-top:6px;font-size:11.5px;color:var(--ink-2)}
+
+/* ---------- detail sheet ---------- */
+.sheet{background:var(--surface);border:1px solid var(--rule);border-radius:9px;
+  box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+.sheet > h3{padding:12px 15px 11px;border-bottom:1px solid var(--rule);
+  background:var(--surface-2);font-size:13px;font-family:var(--sans);font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2)}
+.kv{display:flex;gap:12px;padding:9px 15px;border-bottom:1px solid var(--rule);align-items:baseline}
+.kv:last-child{border-bottom:0}
+.kv dt{flex:0 0 44%;font-size:12.5px;color:var(--ink-3);line-height:1.4}
+.kv dd{flex:1;margin:0;font-size:13.5px;overflow-wrap:anywhere;text-align:right}
+.kv dd.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+.hero-detail{margin-bottom:16px}
+.hero-detail .ty{font-size:11px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--accent)}
+.hero-detail h1{font-size:25px;margin:5px 0 3px;line-height:1.16}
+.hero-detail .val{font-family:var(--mono);font-size:27px;margin-top:10px;font-variant-numeric:tabular-nums}
+.hero-detail .valsub{font-size:13px;margin-top:2px}
+
+/* ---------- forms ---------- */
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:4px}
+.field .hint{font-size:11.5px;color:var(--ink-3);margin-top:4px;line-height:1.45}
+.field input,.field select,.field textarea{
+  width:100%;padding:9px 11px;background:var(--surface);
+  border:1px solid var(--rule-strong);border-radius:6px;font-size:15px
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent-2);outline:none;
+  box-shadow:0 0 0 3px var(--accent-soft)}
+.field textarea{min-height:76px;resize:vertical;line-height:1.5}
+.field input.mono{font-family:var(--mono)}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+@media (max-width:430px){.f2{grid-template-columns:1fr}}
+.fgroup{border:1px solid var(--rule);border-radius:8px;padding:14px;margin-bottom:14px;background:var(--surface)}
+.fgroup > .gl{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:11px}
+
+.btn{
+  background:var(--accent);color:var(--on-accent);border:1px solid var(--accent);
+  padding:10px 17px;border-radius:6px;font-size:14.5px;font-weight:600;cursor:pointer
+}
+.btn:hover{background:var(--accent-2);border-color:var(--accent-2)}
+.btn.ghost{background:none;color:var(--ink-2);border-color:var(--rule-strong)}
+.btn.ghost:hover{background:var(--surface-2);color:var(--ink)}
+.btn.danger{background:none;color:var(--loss);border-color:var(--loss)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.wide{width:100%}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+
+/* ---------- wizard ---------- */
+.wiz{max-width:600px;margin:0 auto;padding:22px 16px 40px}
+.wizrail{display:flex;gap:3px;margin-bottom:22px}
+.wizrail i{flex:1;height:3px;background:var(--sunk);border-radius:2px}
+.wizrail i.on{background:var(--accent-2)}
+.wizrail i.did{background:var(--accent)}
+.wizhead{margin-bottom:18px}
+.wizhead .step{font-size:11px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3)}
+.wizhead h1{font-size:26px;margin:6px 0 7px;line-height:1.18}
+.wizhead p{margin:0;color:var(--ink-2);font-size:14px;line-height:1.55;max-width:60ch}
+.wizfoot{display:flex;gap:10px;align-items:center;margin-top:22px;
+  padding-top:16px;border-top:1px solid var(--rule)}
+.wizfoot .spacer{flex:1}
+
+.entrycard{border:1px solid var(--rule);border-radius:8px;background:var(--surface);
+  padding:12px 14px;margin-bottom:10px;display:flex;gap:11px;align-items:flex-start}
+.entrycard .mid{flex:1;min-width:0}
+.entrycard .t{font-weight:600;font-size:14px}
+.entrycard .s{font-size:12px;color:var(--ink-3);margin-top:2px}
+.entrycard button{background:none;border:0;color:var(--accent);font-size:12.5px;
+  cursor:pointer;padding:2px 4px;font-weight:500}
+.entrycard button.x{color:var(--loss)}
+
+.welcome-list{list-style:none;padding:0;margin:16px 0 0;
+  border-top:1px solid var(--rule)}
+.welcome-list li{display:flex;gap:11px;align-items:baseline;padding:9px 2px;
+  border-bottom:1px solid var(--rule);font-size:13.5px}
+.welcome-list .n{font-family:var(--mono);font-size:11px;color:var(--ink-3);flex:none;width:20px}
+.welcome-list .d{color:var(--ink-3);font-size:12px;margin-left:auto;text-align:right;flex:none}
+
+/* ---------- callouts ---------- */
+.callout{border-left:3px solid var(--warn);background:var(--warn-soft);
+  padding:11px 13px;border-radius:0 6px 6px 0;font-size:12.5px;line-height:1.55;margin:12px 0}
+.callout.info{border-left-color:var(--accent-2);background:var(--accent-soft)}
+.callout strong{font-weight:600}
+.callout a{color:inherit}
+
+.srcline{font-size:11px;color:var(--ink-3);font-family:var(--mono);margin-top:7px;
+  line-height:1.5;overflow-wrap:anywhere}
+.check{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--rule);
+  font-size:13px;line-height:1.45}
+.check:last-child{border-bottom:0}
+.check input{margin-top:3px;flex:none;width:15px;height:15px;accent-color:var(--accent-2)}
+.check .u{font-size:9.5px;font-weight:700;letter-spacing:.06em;color:var(--warn);
+  background:var(--warn-soft);padding:1px 5px;border-radius:3px;margin-left:5px;
+  white-space:nowrap;vertical-align:1px}
+
+.empty{text-align:center;padding:34px 18px;color:var(--ink-3)}
+.empty p{margin:0 0 14px;font-size:13.5px;line-height:1.55}
+
+.txrow{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--rule);font-size:13px}
+.txrow .d{font-family:var(--mono);font-size:12px;color:var(--ink-3);flex:none;width:88px}
+.txrow .a{font-family:var(--mono);flex:1;text-align:right;font-variant-numeric:tabular-nums}
+.txrow button{background:none;border:0;color:var(--loss);cursor:pointer;font-size:16px;line-height:1;padding:0 3px}
+
+.exportbox{width:100%;min-height:150px;font-family:var(--mono);font-size:11px;
+  padding:11px;border:1px solid var(--rule-strong);border-radius:6px;
+  background:var(--sunk);line-height:1.5;resize:vertical}
+
+.meter{height:5px;background:var(--sunk);border-radius:3px;overflow:hidden;margin-top:7px}
+.meter i{display:block;height:100%;background:var(--accent-2)}
+.meter i.hot{background:var(--warn)}
+
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:78px;z-index:80;
+  background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:7px;
+  font-size:13.5px;font-weight:500;box-shadow:var(--shadow);max-width:88vw;text-align:center
+}
+
+/* ---------- year sheet / print ---------- */
+.sheetpaper{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:20px 18px}
+.sheetpaper h2{font-size:20px}
+.sheetpaper table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12.5px}
+.sheetpaper th{text-align:left;font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--rule-strong);padding:6px 8px 6px 0;font-weight:600}
+.sheetpaper td{padding:7px 8px 7px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+.sheetpaper td.n{font-family:var(--mono);text-align:right;padding-right:0;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tablewrap{overflow-x:auto}
+@media print{
+  .topbar,.tabbar,.noprint{display:none!important}
+  body,.app{background:#fff;color:#000}
+  .view{padding:0}
+  .sheetpaper{border:0;padding:0}
+}
+</style>
+
+<div class="app">
+  <header class="topbar noprint">
+    <div class="mark">प</div>
+    <div class="brand">Paisa Patra<small id="brandsub">Personal record</small></div>
+    <div class="spacer"></div>
+    <button class="iconbtn" id="themebtn" type="button">Theme</button>
+  </header>
+  <main class="view" id="view"></main>
+  <nav class="tabbar noprint" id="tabbar" hidden></nav>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+/* ============================================================
+   0 · Home-screen hints (injected: the host head is fixed)
+   ============================================================ */
+[["apple-mobile-web-app-capable","yes"],
+ ["apple-mobile-web-app-status-bar-style","default"],
+ ["apple-mobile-web-app-title","Paisa Patra"],
+ ["theme-color","#163360"]].forEach(function(p){
+  var m=document.createElement("meta"); m.name=p[0]; m.content=p[1]; document.head.appendChild(m);
+});
+[["manifest","manifest.webmanifest"],["apple-touch-icon","icon-180.png"],
+ ["icon","icon-192.png"]].forEach(function(p){
+  var l=document.createElement("link"); l.rel=p[0]; l.href=p[1]; document.head.appendChild(l);
+});
+/* Guaranteed offline. Absent on hosts without sw.js (the artifact), where it fails quietly. */
+if("serviceWorker" in navigator){
+  window.addEventListener("load",function(){
+    navigator.serviceWorker.register("sw.js").catch(function(){});
+  });
+}
+
+/* ============================================================
+   1 · Storage
+   ============================================================ */
+var KEY="paisapatra.v1";
+var S=null;
+
+function blank(){
+  return {v:1, created:todayISO(), setupDone:false, sample:false,
+          profile:{name:"", city:""}, goals:[], holdings:[], claimChecks:{}};
+}
+function load(){
+  try{ var r=localStorage.getItem(KEY); if(r) return JSON.parse(r); }
+  catch(e){ console.warn("storage read failed",e); }
+  return null;
+}
+function save(){
+  try{ localStorage.setItem(KEY,JSON.stringify(S)); return true; }
+  catch(e){
+    toast("Could not save. Phone storage may be full — try removing an attachment.");
+    return false;
+  }
+}
+function bytes(){ try{ return new Blob([JSON.stringify(S)]).size; }catch(e){ return 0; } }
+
+/* ============================================================
+   2 · Dates, money, maths
+   ============================================================ */
+function todayISO(){ var d=new Date(); return iso(d); }
+function iso(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function parseD(s){
+  if(!s) return null;
+  var p=String(s).split("-");
+  if(p.length!==3) return null;
+  var d=new Date(+p[0],+p[1]-1,+p[2]);
+  return isNaN(d.getTime())?null:d;
+}
+function fmtD(s){
+  var d=parseD(s); if(!d) return "—";
+  var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return d.getDate()+" "+M[d.getMonth()]+" "+d.getFullYear();
+}
+function daysBetween(a,b){ return Math.round((b-a)/86400000); }
+function yearsBetween(a,b){ return (b-a)/(365.2425*86400000); }
+
+var INR=new Intl.NumberFormat("en-IN",{maximumFractionDigits:0});
+var INR2=new Intl.NumberFormat("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+function money(n){
+  if(n===null||n===undefined||n===""||isNaN(n)) return "—";
+  n=Number(n);
+  return (n<0?"-₹":"₹")+INR.format(Math.abs(Math.round(n)));
+}
+/* Indian short form: lakh / crore. Used only where space is tight. */
+function moneyShort(n){
+  if(n===null||n===undefined||isNaN(n)) return "—";
+  n=Number(n); var s=n<0?"-":"", a=Math.abs(n);
+  if(a>=1e7) return s+"₹"+trim(a/1e7)+" Cr";
+  if(a>=1e5) return s+"₹"+trim(a/1e5)+" L";
+  if(a>=1000) return s+"₹"+INR.format(Math.round(a));
+  return s+"₹"+Math.round(a);
+}
+function trim(x){ return (Math.round(x*100)/100).toString(); }
+function pct(n,dp){
+  if(n===null||n===undefined||isNaN(n)) return "—";
+  return (n>=0?"+":"")+(n*100).toFixed(dp===undefined?1:dp)+"%";
+}
+function num(v){ var n=parseFloat(v); return isNaN(n)?null:n; }
+
+/* Indian financial year: 1 April to 31 March. */
+function fyOf(d){ return d.getMonth()>=3 ? d.getFullYear() : d.getFullYear()-1; }
+function fyLabel(y){ return "FY "+y+"–"+String((y+1)%100).padStart(2,"0"); }
+function fyRange(y){ return [new Date(y,3,1), new Date(y+1,2,31)]; }
+
+/* CAGR — only honest for a single lump sum. Flagged as such in the UI. */
+function cagr(inv,cur,startISO){
+  var s=parseD(startISO); if(!s||!inv||!cur||inv<=0||cur<=0) return null;
+  var y=yearsBetween(s,new Date());
+  if(y<0.25) return null;
+  return Math.pow(cur/inv,1/y)-1;
+}
+/* XIRR — Newton-Raphson with a bisection fallback. Returns null rather than a guess. */
+function xirr(cfs){
+  if(!cfs||cfs.length<2) return null;
+  var hasNeg=false,hasPos=false;
+  for(var i=0;i<cfs.length;i++){ if(cfs[i].a<0) hasNeg=true; if(cfs[i].a>0) hasPos=true; }
+  if(!hasNeg||!hasPos) return null;
+  var t0=cfs[0].d;
+  function yr(c){ return (c.d-t0)/(365.2425*86400000); }
+  function f(r){ var s=0; for(var i=0;i<cfs.length;i++){ s+=cfs[i].a/Math.pow(1+r,yr(cfs[i])); } return s; }
+  var r=0.12,ok=false;
+  for(var k=0;k<60;k++){
+    var v=f(r), h=1e-5, d=(f(r+h)-v)/h;
+    if(!isFinite(v)||!isFinite(d)||Math.abs(d)<1e-10) break;
+    var nr=r-v/d;
+    if(!isFinite(nr)) break;
+    if(nr<=-0.999) nr=-0.999;
+    if(Math.abs(nr-r)<1e-9){ r=nr; ok=true; break; }
+    r=nr;
+  }
+  if(!ok||!isFinite(r)||Math.abs(f(r))>1){
+    var lo=-0.9,hi=10,flo=f(lo);
+    if(!isFinite(flo)) return null;
+    for(var j=0;j<200;j++){
+      var mid=(lo+hi)/2, fm=f(mid);
+      if(!isFinite(fm)) return null;
+      if((flo<0)===(fm<0)){ lo=mid; flo=fm; } else { hi=mid; }
+    }
+    r=(lo+hi)/2;
+    if(Math.abs(f(r))>1) return null;
+  }
+  if(r<-0.95||r>5) return null;
+  return r;
+}
+/* Indian bank FDs conventionally compound quarterly. Shown as an estimate, always overridable. */
+function fdMaturity(p,rate,startISO,endISO){
+  var s=parseD(startISO), e=parseD(endISO);
+  if(!p||!rate||!s||!e||e<=s) return null;
+  var t=yearsBetween(s,e);
+  return p*Math.pow(1+(rate/100)/4,4*t);
+}
+
+/* ============================================================
+   3 · The eight instrument types
+   ============================================================ */
+var NOMINEE_HELP="Add one nominee, or several with a percentage split. Shares should total 100.";
+
+var TYPES={
+  mf:{label:"Mutual fund",plural:"Mutual funds",glyph:"MF",kind:"growth",
+    fields:[
+      {k:"name",l:"Scheme name",t:"text",req:true,ph:"e.g. Parag Parikh Flexi Cap – Direct Growth"},
+      {k:"amc",l:"AMC / fund house",t:"text"},
+      {k:"folio",l:"Folio number",t:"mono"},
+      {k:"cat",l:"Category",t:"select",o:["Equity","Debt","Hybrid","ELSS","Index","Liquid","Other"]},
+      {k:"mode",l:"Mode",t:"select",o:["SIP","Lumpsum","SIP + lumpsum"]},
+      {k:"sipAmt",l:"SIP instalment",t:"money"},
+      {k:"sipDay",l:"SIP date (day of month)",t:"int",hint:"1–28 works in every month."},
+      {k:"freq",l:"SIP frequency",t:"select",o:["Monthly","Quarterly","Weekly"]},
+      {k:"units",l:"Units held",t:"number"},
+      {k:"invested",l:"Total invested so far",t:"money",req:true},
+      {k:"current",l:"Current value",t:"money",req:true},
+      {k:"startDate",l:"First invested on",t:"date"},
+      {k:"lockEnd",l:"ELSS lock-in ends",t:"date",hint:"Only for ELSS. Leave blank otherwise."}
+    ]},
+  shares:{label:"Shares",plural:"Shares",glyph:"EQ",kind:"growth",
+    fields:[
+      {k:"name",l:"Company",t:"text",req:true,ph:"e.g. Infosys Ltd"},
+      {k:"exch",l:"Exchange",t:"select",o:["NSE","BSE","Both","Unlisted"]},
+      {k:"qty",l:"Quantity",t:"number"},
+      {k:"avgPrice",l:"Average buy price",t:"money"},
+      {k:"curPrice",l:"Current price per share",t:"money",hint:"You type this. The app does not fetch live prices."},
+      {k:"invested",l:"Total invested",t:"money",hint:"Left blank, this is quantity × average price."},
+      {k:"current",l:"Current value",t:"money",hint:"Left blank, this is quantity × current price."},
+      {k:"demat",l:"Demat account no.",t:"mono"},
+      {k:"broker",l:"Broker",t:"text"},
+      {k:"startDate",l:"First bought on",t:"date"}
+    ]},
+  lic:{label:"LIC / endowment policy",plural:"LIC & endowment",glyph:"LIC",kind:"growth",insurance:true,
+    fields:[
+      {k:"name",l:"Plan name",t:"text",req:true,ph:"e.g. LIC Jeevan Anand"},
+      {k:"insurer",l:"Insurer",t:"text",ph:"Life Insurance Corporation of India"},
+      {k:"policyNo",l:"Policy number",t:"mono",req:true},
+      {k:"planNo",l:"Plan / table number",t:"mono"},
+      {k:"sumAssured",l:"Sum assured",t:"money"},
+      {k:"premium",l:"Premium amount",t:"money"},
+      {k:"freq",l:"Premium frequency",t:"select",o:["Yearly","Half-yearly","Quarterly","Monthly","Single premium"]},
+      {k:"nextDue",l:"Next premium due",t:"date"},
+      {k:"riskDate",l:"Date of commencement of risk",t:"date",
+        hint:"Matters for claims: LIC treats deaths within three years of this date differently."},
+      {k:"term",l:"Policy term (years)",t:"int"},
+      {k:"pptTerm",l:"Premium paying term (years)",t:"int"},
+      {k:"maturity",l:"Maturity date",t:"date"},
+      {k:"bonus",l:"Bonus accrued (as last stated)",t:"money"},
+      {k:"invested",l:"Premiums paid to date",t:"money"},
+      {k:"current",l:"Current / surrender value",t:"money",
+        hint:"Whatever the last statement said. Leave blank and it is excluded from net worth."},
+      {k:"branch",l:"Servicing branch",t:"text",hint:"The claim is lodged here. Worth filling in."},
+      {k:"agentName",l:"Agent name",t:"text"},
+      {k:"agentPhone",l:"Agent phone",t:"tel"},
+      {k:"helpline",l:"Insurer helpline",t:"tel"}
+    ]},
+  term:{label:"Term insurance",plural:"Term insurance",glyph:"TRM",kind:"cover",insurance:true,
+    fields:[
+      {k:"name",l:"Plan name",t:"text",req:true},
+      {k:"insurer",l:"Insurer",t:"text",req:true},
+      {k:"policyNo",l:"Policy number",t:"mono",req:true},
+      {k:"sumAssured",l:"Sum assured (cover)",t:"money",req:true},
+      {k:"premium",l:"Premium amount",t:"money"},
+      {k:"freq",l:"Premium frequency",t:"select",o:["Yearly","Half-yearly","Quarterly","Monthly","Single premium"]},
+      {k:"nextDue",l:"Next premium due",t:"date"},
+      {k:"riskDate",l:"Cover started",t:"date"},
+      {k:"coverEnd",l:"Cover ends",t:"date"},
+      {k:"riders",l:"Riders",t:"text",ph:"e.g. accidental death benefit, critical illness"},
+      {k:"branch",l:"Servicing office",t:"text"},
+      {k:"agentName",l:"Agent / advisor",t:"text"},
+      {k:"agentPhone",l:"Agent phone",t:"tel"},
+      {k:"helpline",l:"Claim helpline",t:"tel"}
+    ]},
+  fd:{label:"Fixed deposit",plural:"Fixed deposits",glyph:"FD",kind:"growth",
+    fields:[
+      {k:"name",l:"Bank / NBFC",t:"text",req:true},
+      {k:"fdNo",l:"FD / receipt number",t:"mono"},
+      {k:"invested",l:"Principal",t:"money",req:true},
+      {k:"rate",l:"Interest rate (% p.a.)",t:"number"},
+      {k:"startDate",l:"Deposited on",t:"date"},
+      {k:"maturity",l:"Maturity date",t:"date",req:true},
+      {k:"current",l:"Maturity amount",t:"money",
+        hint:"Leave blank and the app estimates it at quarterly compounding, the usual bank convention. Your receipt is the authority — type its figure if it differs."},
+      {k:"payout",l:"Payout",t:"select",o:["Cumulative (at maturity)","Monthly interest","Quarterly interest","Yearly interest"]},
+      {k:"autoRenew",l:"Auto-renew",t:"select",o:["No","Yes"]},
+      {k:"branch",l:"Branch",t:"text"}
+    ]},
+  ppf:{label:"PPF account",plural:"PPF",glyph:"PPF",kind:"growth",
+    fields:[
+      {k:"name",l:"Bank / post office",t:"text",req:true},
+      {k:"acctNo",l:"Account number",t:"mono"},
+      {k:"startDate",l:"Opened on",t:"date"},
+      {k:"maturity",l:"Maturity date",t:"date",hint:"15 financial years from the year of opening."},
+      {k:"fyContrib",l:"Contributed this financial year",t:"money",
+        hint:"Track it: the statutory annual ceiling exists and the app will not guess at it for you."},
+      {k:"invested",l:"Total contributed",t:"money"},
+      {k:"current",l:"Current balance",t:"money",req:true},
+      {k:"extension",l:"Extension status",t:"select",o:["Original 15-year term","Extended with contribution","Extended without contribution"]}
+    ]},
+  epfnps:{label:"EPF / NPS",plural:"EPF & NPS",glyph:"RET",kind:"growth",
+    fields:[
+      {k:"name",l:"Account name",t:"text",req:true,ph:"e.g. EPF – current employer"},
+      {k:"scheme",l:"Scheme",t:"select",o:["EPF","EPS","VPF","NPS Tier I","NPS Tier II","Other"]},
+      {k:"acctNo",l:"UAN / PRAN",t:"mono"},
+      {k:"employer",l:"Employer",t:"text"},
+      {k:"pref",l:"NPS scheme preference",t:"text",ph:"e.g. Auto choice – moderate"},
+      {k:"invested",l:"Total contributed",t:"money"},
+      {k:"current",l:"Balance",t:"money",req:true},
+      {k:"asOf",l:"Balance as on",t:"date",hint:"These statements lag. Date it so you know how stale the number is."}
+    ]},
+  ssy:{label:"Sukanya Samriddhi",plural:"Sukanya Samriddhi",glyph:"SSY",kind:"growth",
+    fields:[
+      {k:"name",l:"Bank / post office",t:"text",req:true},
+      {k:"acctNo",l:"Account number",t:"mono"},
+      {k:"childName",l:"Account holder (girl child)",t:"text"},
+      {k:"childDob",l:"Date of birth",t:"date"},
+      {k:"startDate",l:"Opened on",t:"date"},
+      {k:"maturity",l:"Maturity date",t:"date"},
+      {k:"fyContrib",l:"Contributed this financial year",t:"money"},
+      {k:"invested",l:"Total contributed",t:"money"},
+      {k:"current",l:"Current balance",t:"money",req:true}
+    ]}
+};
+var TYPE_ORDER=["mf","shares","lic","term","fd","ppf","epfnps","ssy"];
+
+/* Claim documents, transcribed from LIC's published claim requirements.
+   Every line stays marked unverified until Rahul ticks it against his own bond. */
+var CLAIM_DOCS=[
+  "Claim Form 'A' — Claimant's Statement, Form No. 3783",
+  "Certified extract from the death register",
+  "Original policy document, with any deeds of assignment",
+  "NEFT mandate from the claimant, for direct credit of the claim amount",
+  "Proof of title of the claimant",
+  "Proof of death",
+  "Where applicable: proof of accident, records of medical treatment before death, and a school / college / employer certificate"
+];
+var CLAIM_SRC="Source: licindia.in — Claims Settlement Requirements. Checked 2026-09-04. Verify against your own policy document; requirements differ by plan and by circumstance.";
+
+/* ============================================================
+   4 · Derived values
+   ============================================================ */
+function holdingInvested(h){
+  var v=num(h.invested);
+  if(v!==null) return v;
+  if(h.type==="shares"){
+    var q=num(h.qty), p=num(h.avgPrice);
+    if(q!==null&&p!==null) return q*p;
+  }
+  return null;
+}
+function holdingCurrent(h){
+  var v=num(h.current);
+  if(v!==null) return v;
+  if(h.type==="shares"){
+    var q=num(h.qty), p=num(h.curPrice);
+    if(q!==null&&p!==null) return q*p;
+  }
+  if(h.type==="fd"){
+    var e=fdMaturity(num(h.invested),num(h.rate),h.startDate,h.maturity);
+    if(e!==null) return e;
+  }
+  return null;
+}
+function fdEstimated(h){
+  return h.type==="fd" && num(h.current)===null && holdingCurrent(h)!==null;
+}
+function holdingReturn(h){
+  var inv=holdingInvested(h), cur=holdingCurrent(h);
+  if(inv===null||cur===null) return null;
+  return {abs:cur-inv, rel:inv>0?(cur-inv)/inv:null};
+}
+/* Rate of return: XIRR when a transaction log exists, else CAGR flagged approximate. */
+function holdingRate(h){
+  var cur=holdingCurrent(h);
+  if(h.tx&&h.tx.length>=1&&cur!==null){
+    var cfs=h.tx.filter(function(t){return parseD(t.date)&&num(t.amount)!==null;})
+      .map(function(t){ return {d:parseD(t.date), a:-Math.abs(num(t.amount))}; })
+      .sort(function(a,b){return a.d-b.d;});
+    if(cfs.length>=1){
+      cfs.push({d:new Date(), a:cur});
+      var r=xirr(cfs);
+      if(r!==null) return {r:r, kind:"XIRR", exact:true};
+    }
+  }
+  var c=cagr(holdingInvested(h),cur,h.startDate);
+  if(c!==null) return {r:c, kind:"CAGR", exact:false};
+  return null;
+}
+function netWorth(){
+  var t={current:0,invested:0,cover:0,unvalued:0};
+  S.holdings.forEach(function(h){
+    var def=TYPES[h.type]; if(!def) return;
+    if(def.kind==="cover"){ t.cover+=num(h.sumAssured)||0; return; }
+    var c=holdingCurrent(h), i=holdingInvested(h);
+    if(c===null){ t.unvalued++; } else { t.current+=c; }
+    if(i!==null) t.invested+=i;
+  });
+  if(TYPES.lic) S.holdings.forEach(function(h){ if(h.type==="lic") t.cover+=num(h.sumAssured)||0; });
+  return t;
+}
+
+/* ---- due dates ---------------------------------------------------------- */
+function rollForward(d,freq,from){
+  var months={"Monthly":1,"Quarterly":3,"Half-yearly":6,"Yearly":12}[freq];
+  var out=new Date(d.getTime()), guard=0;
+  if(freq==="Weekly"){
+    while(out<from && guard++<600){ out.setDate(out.getDate()+7); }
+    return out;
+  }
+  if(!months) return out;
+  while(out<from && guard++<600){ out.setMonth(out.getMonth()+months); }
+  return out;
+}
+function dueEvents(horizonDays){
+  var now=new Date(); now.setHours(0,0,0,0);
+  var out=[];
+  S.holdings.forEach(function(h){
+    var def=TYPES[h.type]; if(!def) return;
+    var label=h.name||def.label;
+    /* premiums */
+    if((h.type==="lic"||h.type==="term") && h.nextDue && h.freq && h.freq!=="Single premium"){
+      var d0=parseD(h.nextDue);
+      if(d0){
+        var d=rollForward(d0,h.freq,now);
+        out.push({id:h.id,kind:"premium",title:label,
+          sub:h.freq+" premium"+(h.policyNo?" · "+h.policyNo:""),
+          date:d,amount:num(h.premium),recur:h.freq});
+        if(d0<now) out.push({id:h.id,kind:"premium",title:label,
+          sub:"Overdue since "+fmtD(iso(d0)),date:d0,amount:num(h.premium),overdue:true});
+      }
+    }
+    /* SIP instalments */
+    if(h.type==="mf" && h.sipDay && h.mode!=="Lumpsum"){
+      var day=Math.min(Math.max(parseInt(h.sipDay,10)||0,1),28);
+      if(day){
+        var nd=new Date(now.getFullYear(),now.getMonth(),day);
+        if(nd<now) nd.setMonth(nd.getMonth()+1);
+        out.push({id:h.id,kind:"sip",title:label,
+          sub:(h.freq||"Monthly")+" SIP"+(h.folio?" · "+h.folio:""),
+          date:nd,amount:num(h.sipAmt),recur:h.freq||"Monthly"});
+      }
+    }
+    /* maturities */
+    ["maturity","coverEnd","lockEnd"].forEach(function(k){
+      if(!h[k]) return;
+      var d=parseD(h[k]); if(!d) return;
+      var what=k==="maturity"?(h.type==="fd"?"FD matures":"Matures")
+              :k==="coverEnd"?"Cover ends":"ELSS lock-in ends";
+      out.push({id:h.id,kind:"maturity",title:label,sub:what,date:d,
+        amount:k==="maturity"?holdingCurrent(h):null});
+    });
+  });
+  out.sort(function(a,b){ return a.date-b.date; });
+  if(horizonDays){
+    var lim=new Date(now.getTime()+horizonDays*86400000);
+    out=out.filter(function(e){ return e.date<=lim; });
+  }
+  return out;
+}
+
+/* ============================================================
+   5 · Rendering helpers
+   ============================================================ */
+var view=document.getElementById("view");
+var esc=function(s){
+  return String(s===null||s===undefined?"":s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+};
+function el(html){ var t=document.createElement("template"); t.innerHTML=html.trim(); return t.content.firstElementChild; }
+function toast(msg){
+  var old=document.querySelector(".toast"); if(old) old.remove();
+  var t=el('<div class="toast" role="status">'+esc(msg)+"</div>");
+  document.body.appendChild(t);
+  setTimeout(function(){ if(t.parentNode) t.remove(); },3400);
+}
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+/* ============================================================
+   6 · Router
+   ============================================================ */
+var route={name:"home",arg:null};
+function go(name,arg){ route={name:name,arg:arg||null}; render(); window.scrollTo(0,0); }
+
+var TABS=[
+  ["home","Home",'<path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/>'],
+  ["holdings","Holdings",'<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/>'],
+  ["due","Due",'<rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M8 3v4M16 3v4M3.5 10h17"/>'],
+  ["goals","Goals",'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/>'],
+  ["data","Data",'<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>']
+];
+function renderTabs(){
+  var bar=document.getElementById("tabbar");
+  if(!S.setupDone){ bar.hidden=true; return; }
+  bar.hidden=false;
+  bar.innerHTML=TABS.map(function(t){
+    var on=(route.name===t[0]||(route.name==="detail"&&t[0]==="holdings")||
+            (route.name==="edit"&&t[0]==="holdings")||(route.name==="yearsheet"&&t[0]==="due")||
+            (route.name==="claimguide"&&t[0]==="data"));
+    return '<button type="button" data-t="'+t[0]+'" class="'+(on?"on":"")+'">'+
+      '<svg viewBox="0 0 24 24" aria-hidden="true">'+t[2]+"</svg>"+esc(t[1])+"</button>";
+  }).join("");
+  Array.prototype.forEach.call(bar.querySelectorAll("button"),function(b){
+    b.onclick=function(){ go(b.dataset.t); };
+  });
+}
+
+function render(){
+  renderTabs();
+  document.getElementById("brandsub").textContent =
+    S.setupDone ? (S.profile.name ? S.profile.name : "Personal record") : "Setup";
+  var f={home:viewHome,holdings:viewHoldings,due:viewDue,goals:viewGoals,data:viewData,
+         detail:viewDetail,edit:viewEdit,yearsheet:viewYearSheet,claimguide:viewClaimGuide,
+         setup:viewSetup}[route.name];
+  view.innerHTML="";
+  (f||viewHome)();
+}
+
+/* ============================================================
+   7 · Home
+   ============================================================ */
+function viewHome(){
+  var t=netWorth();
+  var gain=t.current-t.invested;
+  var rel=t.invested>0?gain/t.invested:null;
+
+  var band=el(
+    '<section class="band">'+
+      '<div class="lbl">Total portfolio value</div>'+
+      '<div class="big">'+esc(money(t.current))+"</div>"+
+      '<div class="sub">'+(t.invested>0
+        ? esc(money(gain))+" "+(gain>=0?"gain":"loss")+" on "+esc(money(t.invested))+" invested · "+esc(pct(rel))
+        : "Add what you have invested to see returns")+"</div>"+
+      '<div class="bandgrid">'+
+        '<div><div class="lbl">Invested</div><div class="v">'+esc(moneyShort(t.invested))+"</div></div>"+
+        '<div><div class="lbl">Life cover</div><div class="v">'+esc(moneyShort(t.cover))+"</div></div>"+
+      "</div>"+
+    "</section>");
+  view.appendChild(band);
+
+  if(t.unvalued>0){
+    view.appendChild(el('<div class="callout">'+t.unvalued+" holding"+(t.unvalued>1?"s have":" has")+
+      " no current value entered, so "+(t.unvalued>1?"they are":"it is")+
+      " missing from the total above.</div>"));
+  }
+  if(S.sample){
+    view.appendChild(el('<div class="callout"><strong>This is sample data</strong>, not your portfolio. '+
+      'Clear it from the Data tab when you are ready to enter your own.</div>'));
+  }
+
+  /* Due soon */
+  var due=dueEvents(90);
+  var head=el('<div class="section-head"><h2>Due soon</h2>'+
+    '<span class="count">next 90 days</span>'+
+    '<button class="act" type="button">All dates</button></div>');
+  head.querySelector(".act").onclick=function(){ go("due"); };
+  view.appendChild(head);
+
+  if(!due.length){
+    view.appendChild(el('<div class="empty"><p>Nothing falls due in the next 90 days.</p></div>'));
+  } else {
+    var wrap=el('<div class="duewrap"></div>');
+    due.slice(0,7).forEach(function(e){ wrap.appendChild(dueRow(e)); });
+    view.appendChild(wrap);
+    if(due.length>7){
+      var more=el('<div class="note" style="margin-top:9px">'+(due.length-7)+
+        " more in this window.</div>");
+      view.appendChild(more);
+    }
+  }
+
+  /* Goals */
+  if(S.goals.length){
+    var gh=el('<div class="section-head"><h2>Goals</h2>'+
+      '<button class="act" type="button">Manage</button></div>');
+    gh.querySelector(".act").onclick=function(){ go("goals"); };
+    view.appendChild(gh);
+    S.goals.slice(0,3).forEach(function(g){ view.appendChild(goalBlock(g)); });
+  }
+
+  /* Mix by type */
+  var mix=TYPE_ORDER.map(function(k){
+    var items=S.holdings.filter(function(h){ return h.type===k; });
+    if(!items.length) return null;
+    var v=0,any=false;
+    items.forEach(function(h){
+      if(TYPES[k].kind==="cover"){ v+=num(h.sumAssured)||0; any=true; return; }
+      var c=holdingCurrent(h); if(c!==null){ v+=c; any=true; }
+    });
+    return {k:k,n:items.length,v:any?v:null};
+  }).filter(Boolean);
+
+  if(mix.length){
+    var mh=el('<div class="section-head"><h2>By type</h2>'+
+      '<button class="act" type="button">See all</button></div>');
+    mh.querySelector(".act").onclick=function(){ go("holdings"); };
+    view.appendChild(mh);
+    var led=el('<div class="ledger"></div>');
+    mix.forEach(function(m){
+      var def=TYPES[m.k];
+      var isCover=def.kind==="cover";
+      var share=(!isCover&&t.current>0&&m.v!==null)?(m.v/t.current):null;
+      var r=el('<button class="row" type="button">'+
+        '<span class="glyph">'+esc(def.glyph)+"</span>"+
+        '<span class="mid"><span class="t">'+esc(def.plural)+"</span>"+
+        '<span class="s">'+m.n+" holding"+(m.n>1?"s":"")+
+          (share!==null?" · "+(share*100).toFixed(0)+"% of portfolio":"")+"</span></span>"+
+        '<span class="end"><span class="v">'+esc(moneyShort(m.v))+"</span>"+
+        '<span class="d dim">'+(isCover?"cover":"value")+"</span></span></button>");
+      r.onclick=function(){ go("holdings",m.k); };
+      led.appendChild(r);
+    });
+    view.appendChild(led);
+  }
+}
+
+function dueRow(e){
+  var now=new Date(); now.setHours(0,0,0,0);
+  var d=daysBetween(now,e.date);
+  var cls=e.overdue||d<0?"over":(d<=14?"warn":"calm");
+  var when=e.overdue||d<0?"overdue":d===0?"today":d===1?"tomorrow":"in "+d+" days";
+  var r=el('<button class="duerow '+cls+'" type="button">'+
+    '<span class="mid"><span class="t">'+esc(e.title)+"</span>"+
+    '<span class="s">'+esc(e.sub)+"</span></span>"+
+    '<span class="end">'+esc(fmtD(iso(e.date)))+"<br>"+
+      '<span class="'+(cls==="over"?"neg":"dim")+'">'+esc(when)+"</span>"+
+      (e.amount?"<br>"+esc(moneyShort(e.amount)):"")+"</span></button>");
+  r.onclick=function(){ go("detail",e.id); };
+  return r;
+}
+
+function goalProgress(g){
+  var v=0;
+  S.holdings.forEach(function(h){
+    if(h.goalId!==g.id) return;
+    if(TYPES[h.type]&&TYPES[h.type].kind==="cover") return;
+    var c=holdingCurrent(h); if(c!==null) v+=c;
+  });
+  return v;
+}
+function goalBlock(g){
+  var v=goalProgress(g), tgt=num(g.target);
+  var p=(tgt&&tgt>0)?Math.min(v/tgt,1):0;
+  var n=S.holdings.filter(function(h){ return h.goalId===g.id; }).length;
+  var left=tgt?Math.max(tgt-v,0):null;
+  var by=g.targetDate?fmtD(g.targetDate):null;
+  return el('<div class="goal">'+
+    '<div class="gh"><span class="gn">'+esc(g.name)+"</span>"+
+    '<span class="gt">'+esc(moneyShort(v))+(tgt?" / "+esc(moneyShort(tgt)):"")+"</span></div>"+
+    '<div class="bar"><i class="'+(p>=1?"done":"")+'" style="width:'+(p*100).toFixed(1)+'%"></i></div>'+
+    '<div class="gf"><span>'+n+" holding"+(n===1?"":"s")+
+      (by?" · by "+esc(by):"")+"</span>"+
+    "<span>"+(tgt?(p>=1?"Target met":esc(moneyShort(left))+" to go"):"No target set")+"</span></div>"+
+  "</div>");
+}
+
+/* ============================================================
+   8 · Holdings list
+   ============================================================ */
+function viewHoldings(){
+  var filter=route.arg;
+  var head=el('<div class="section-head"><h2>Holdings</h2>'+
+    '<span class="count">'+S.holdings.length+"</span>"+
+    '<button class="act" type="button">+ Add</button></div>');
+  head.querySelector(".act").onclick=function(){ go("edit","new"); };
+  view.appendChild(head);
+
+  var chips=el('<div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:9px;margin-bottom:2px"></div>');
+  var opts=[["","All"]].concat(TYPE_ORDER.filter(function(k){
+    return S.holdings.some(function(h){ return h.type===k; });
+  }).map(function(k){ return [k,TYPES[k].plural]; }));
+  opts.forEach(function(o){
+    var on=(filter||"")===o[0];
+    var b=el('<button type="button" class="iconbtn" style="white-space:nowrap;flex:none;'+
+      (on?"border-color:var(--accent);color:var(--accent);background:var(--accent-soft)":"")+'">'+
+      esc(o[1])+"</button>");
+    b.onclick=function(){ go("holdings",o[0]||null); };
+    chips.appendChild(b);
+  });
+  if(opts.length>2) view.appendChild(chips);
+
+  var list=S.holdings.filter(function(h){ return !filter||h.type===filter; });
+  if(!list.length){
+    var e=el('<div class="empty"><p>Nothing here yet.</p></div>');
+    var b=el('<button class="btn" type="button">Add a holding</button>');
+    b.onclick=function(){ go("edit","new"); };
+    e.appendChild(b); view.appendChild(e); return;
+  }
+
+  var byType={};
+  list.forEach(function(h){ (byType[h.type]=byType[h.type]||[]).push(h); });
+  TYPE_ORDER.forEach(function(k){
+    if(!byType[k]) return;
+    var def=TYPES[k];
+    view.appendChild(el('<div class="section-head" style="margin-top:20px">'+
+      "<h2>"+esc(def.plural)+'</h2><span class="count">'+byType[k].length+"</span></div>"));
+    var led=el('<div class="ledger"></div>');
+    byType[k].forEach(function(h){ led.appendChild(holdingRow(h)); });
+    view.appendChild(led);
+  });
+}
+
+function holdingRow(h){
+  var def=TYPES[h.type];
+  var isCover=def.kind==="cover";
+  var val=isCover?num(h.sumAssured):holdingCurrent(h);
+  var ret=isCover?null:holdingReturn(h);
+  var sub=[];
+  if(h.policyNo) sub.push(h.policyNo);
+  else if(h.folio) sub.push(h.folio);
+  else if(h.acctNo) sub.push(h.acctNo);
+  else if(h.fdNo) sub.push(h.fdNo);
+  if(h.type==="shares"&&h.qty) sub.push(h.qty+" sh");
+  if(h.insurerShort) sub.push(h.insurerShort);
+  if(isCover&&h.insurer) sub.push(h.insurer);
+  if(h.type==="fd"&&h.maturity) sub.push("matures "+fmtD(h.maturity));
+  var g=h.goalId&&S.goals.filter(function(x){return x.id===h.goalId;})[0];
+  if(g) sub.push(g.name);
+
+  var r=el('<button class="row" type="button">'+
+    '<span class="glyph">'+esc(def.glyph)+"</span>"+
+    '<span class="mid"><span class="t">'+esc(h.name||def.label)+"</span>"+
+    '<span class="s">'+esc(sub.join(" · ")||def.label)+"</span></span>"+
+    '<span class="end"><span class="v">'+esc(moneyShort(val))+"</span>"+
+    '<span class="d '+(ret&&ret.abs>=0?"pos":ret?"neg":"dim")+'">'+
+      (isCover?"cover":(ret&&ret.rel!==null?pct(ret.rel):"—"))+"</span></span></button>");
+  r.onclick=function(){ go("detail",h.id); };
+  return r;
+}
+
+/* ============================================================
+   9 · Detail
+   ============================================================ */
+function findH(id){ return S.holdings.filter(function(h){ return h.id===id; })[0]||null; }
+
+function kvBlock(title,rows){
+  var rs=rows.filter(function(r){ return r&&r[1]!==null&&r[1]!==undefined&&r[1]!==""&&r[1]!=="—"; });
+  if(!rs.length) return null;
+  return el('<section class="sheet"><h3>'+esc(title)+"</h3>"+
+    rs.map(function(r){
+      return '<dl class="kv"><dt>'+esc(r[0])+"</dt>"+
+        '<dd'+(r[2]?' class="mono"':"")+">"+esc(r[1])+"</dd></dl>";
+    }).join("")+"</section>");
+}
+
+function viewDetail(){
+  var h=findH(route.arg);
+  if(!h){ go("holdings"); return; }
+  var def=TYPES[h.type], isCover=def.kind==="cover";
+
+  var back=el('<button class="iconbtn" type="button" style="margin-bottom:14px">← Holdings</button>');
+  back.onclick=function(){ go("holdings"); };
+  view.appendChild(back);
+
+  var val=isCover?num(h.sumAssured):holdingCurrent(h);
+  var ret=isCover?null:holdingReturn(h);
+  var rate=isCover?null:holdingRate(h);
+  var sub=isCover
+    ? "Sum assured. Cover is not counted in portfolio value."
+    : (ret? money(ret.abs)+" "+(ret.abs>=0?"gain":"loss")+
+        (ret.rel!==null?" · "+pct(ret.rel):"")
+      : "Enter invested and current value to see returns");
+
+  view.appendChild(el('<div class="hero-detail">'+
+    '<div class="ty">'+esc(def.label)+"</div>"+
+    "<h1>"+esc(h.name||def.label)+"</h1>"+
+    '<div class="val '+(ret&&ret.abs<0?"neg":"")+'">'+esc(money(val))+"</div>"+
+    '<div class="valsub '+(ret?(ret.abs>=0?"pos":"neg"):"muted")+'">'+esc(sub)+"</div>"+
+  "</div>"));
+
+  if(fdEstimated(h)){
+    view.appendChild(el('<div class="callout"><strong>Estimated, not quoted.</strong> '+
+      "No maturity amount was entered, so this is calculated at quarterly compounding — the usual "+
+      "Indian bank convention, but not a universal one. Your FD receipt is the authority. "+
+      "Edit this holding and type its figure to replace the estimate.</div>"));
+  }
+  if(rate){
+    view.appendChild(el('<div class="callout info">'+
+      "<strong>"+esc(rate.kind)+" "+esc(pct(rate.r,2))+" a year.</strong> "+
+      (rate.exact
+        ? "Calculated from the transaction log below, so it accounts for the actual dates money went in."
+        : "CAGR assumes the whole amount went in on the start date. For a running SIP that is "+
+          "arithmetically wrong and usually flatters the number. Add a transaction log below for a true XIRR.")+
+      "</div>"));
+  }
+
+  var b;
+  /* identity */
+  b=kvBlock("Identification",[
+    ["Policy number",h.policyNo,1],["Plan / table number",h.planNo,1],
+    ["Folio number",h.folio,1],["Account number",h.acctNo,1],["FD number",h.fdNo,1],
+    ["Demat account",h.demat,1],["Insurer",h.insurer],["AMC",h.amc],["Broker",h.broker],
+    ["Exchange",h.exch],["Category",h.cat],["Scheme",h.scheme],["Employer",h.employer],
+    ["Account holder",h.childName],["Date of birth",h.childDob?fmtD(h.childDob):null]
+  ]);
+  if(b) view.appendChild(b);
+
+  /* money */
+  b=kvBlock("Money",[
+    ["Invested",money(holdingInvested(h)),1],
+    [isCover?"Sum assured":"Current value",money(val),1],
+    ["Sum assured",!isCover&&h.sumAssured?money(num(h.sumAssured)):null,1],
+    ["Bonus accrued",h.bonus?money(num(h.bonus)):null,1],
+    ["Units",h.units,1],["Quantity",h.qty,1],
+    ["Average buy price",h.avgPrice?money(num(h.avgPrice)):null,1],
+    ["Current price",h.curPrice?money(num(h.curPrice)):null,1],
+    ["Principal",h.type==="fd"?money(num(h.invested)):null,1],
+    ["Interest rate",h.rate?h.rate+"% p.a.":null,1],
+    ["Payout",h.payout],["Auto-renew",h.autoRenew],
+    ["This FY contribution",h.fyContrib?money(num(h.fyContrib)):null,1],
+    ["Extension",h.extension],["Balance as on",h.asOf?fmtD(h.asOf):null]
+  ]);
+  if(b) view.appendChild(b);
+
+  /* premium & dates */
+  b=kvBlock("Premium and dates",[
+    ["Premium",h.premium?money(num(h.premium)):null,1],
+    ["Frequency",h.freq],
+    ["Next due",h.nextDue?fmtD(h.nextDue):null],
+    ["SIP instalment",h.sipAmt?money(num(h.sipAmt)):null,1],
+    ["SIP date",h.sipDay?"day "+h.sipDay+" of each month":null],
+    ["Mode",h.mode],
+    ["Started / risk date",h.riskDate?fmtD(h.riskDate):(h.startDate?fmtD(h.startDate):null)],
+    ["Policy term",h.term?h.term+" years":null],
+    ["Premium paying term",h.pptTerm?h.pptTerm+" years":null],
+    ["Maturity",h.maturity?fmtD(h.maturity):null],
+    ["Cover ends",h.coverEnd?fmtD(h.coverEnd):null],
+    ["ELSS lock-in ends",h.lockEnd?fmtD(h.lockEnd):null],
+    ["Riders",h.riders]
+  ]);
+  if(b) view.appendChild(b);
+
+  /* nominees */
+  if(h.nominees&&h.nominees.length){
+    var total=h.nominees.reduce(function(s,n){ return s+(num(n.share)||0); },0);
+    var nb=el('<section class="sheet"><h3>Nominees</h3></section>');
+    h.nominees.forEach(function(n){
+      nb.appendChild(el('<dl class="kv"><dt>'+esc(n.name||"Unnamed")+
+        (n.relation?' <span class="dim">· '+esc(n.relation)+"</span>":"")+"</dt>"+
+        '<dd class="mono">'+(n.share?esc(n.share)+"%":"—")+
+        (n.contact?'<br><span style="font-size:12px">'+esc(n.contact)+"</span>":"")+
+        "</dd></dl>"));
+    });
+    if(h.nominees.length>1&&Math.abs(total-100)>0.01){
+      nb.appendChild(el('<dl class="kv"><dt class="neg">Shares total '+total+
+        "%</dt><dd>Should be 100%</dd></dl>"));
+    }
+    view.appendChild(nb);
+  }
+
+  /* contacts */
+  b=kvBlock("Who to contact",[
+    ["Servicing branch",h.branch],["Agent",h.agentName],
+    ["Agent phone",h.agentPhone,1],["Helpline",h.helpline,1]
+  ]);
+  if(b) view.appendChild(b);
+
+  /* claim block for insurance */
+  if(def.insurance) view.appendChild(claimSection(h));
+
+  /* transaction log */
+  view.appendChild(txSection(h));
+
+  /* attachments */
+  if(h.files&&h.files.length){
+    var fb=el('<section class="sheet"><h3>Attachments</h3></section>');
+    h.files.forEach(function(f,i){
+      var row=el('<dl class="kv"><dt>'+esc(f.name)+"</dt>"+
+        '<dd><a href="'+f.data+'" target="_blank" rel="noopener">Open</a></dd></dl>');
+      fb.appendChild(row);
+    });
+    view.appendChild(fb);
+  }
+
+  if(h.notes){
+    view.appendChild(el('<section class="sheet"><h3>Notes</h3>'+
+      '<div style="padding:12px 15px;font-size:13.5px;line-height:1.6;white-space:pre-wrap">'+
+      esc(h.notes)+"</div></section>"));
+  }
+
+  var row=el('<div class="btnrow noprint"></div>');
+  var e=el('<button class="btn" type="button">Edit</button>');
+  e.onclick=function(){ go("edit",h.id); };
+  var d=el('<button class="btn danger" type="button">Delete</button>');
+  d.onclick=function(){
+    if(confirm("Delete “"+(h.name||def.label)+"”? This cannot be undone."+
+       "\n\nIf you have not exported recently, cancel and export first.")){
+      S.holdings=S.holdings.filter(function(x){ return x.id!==h.id; });
+      save(); toast("Deleted."); go("holdings");
+    }
+  };
+  row.appendChild(e); row.appendChild(d);
+  view.appendChild(row);
+}
+
+function claimSection(h){
+  var sec=el('<section class="sheet"><h3>If a claim has to be made</h3></section>');
+  var body=el('<div style="padding:13px 15px"></div>');
+
+  body.appendChild(el('<div class="note" style="margin-bottom:10px">'+
+    "The person entitled to the money intimates the <strong>servicing branch</strong>"+
+    (h.branch?" — "+esc(h.branch):"")+
+    ". The branch then issues the claim forms and states what else it needs.</div>"));
+
+  body.appendChild(el('<div class="eyebrow" style="margin:14px 0 4px">Documents to have ready</div>'));
+  CLAIM_DOCS.forEach(function(doc,i){
+    var key=h.id+":"+i;
+    var checked=!!S.claimChecks[key];
+    var c=el('<label class="check"><input type="checkbox"'+(checked?" checked":"")+">"+
+      "<span>"+esc(doc)+(checked?"":'<span class="u">unverified</span>')+"</span></label>");
+    c.querySelector("input").onchange=function(ev){
+      S.claimChecks[key]=ev.target.checked; save(); render();
+    };
+    body.appendChild(c);
+  });
+  body.appendChild(el('<div class="srcline">'+esc(CLAIM_SRC)+"</div>"));
+
+  if(h.riskDate){
+    var rd=parseD(h.riskDate);
+    if(rd){
+      var three=new Date(rd.getTime()); three.setFullYear(three.getFullYear()+3);
+      var past=new Date()>three;
+      body.appendChild(el('<div class="callout'+(past?" info":"")+'">'+
+        "<strong>Three-year mark: "+esc(fmtD(iso(three)))+".</strong> "+
+        (past
+          ? "Passed. LIC's published requirements treat this as the ordinary case."
+          : "Not yet passed. LIC states that a death within three years of the risk date "+
+            "— or of a revival — brings additional requirements, and the servicing "+
+            "branch must be contacted about them.")+
+        "</div>"));
+    }
+  }
+
+  body.appendChild(el('<div class="eyebrow" style="margin:16px 0 4px">If it is not settled</div>'));
+  body.appendChild(el('<div class="note">Raise it with the insurer first. If it is still unresolved, '+
+    "IRDAI's Bima Bharosa portal takes the complaint: <strong>bimabharosa.irdai.gov.in</strong>, "+
+    "or complaints@irdai.gov.in, or the toll-free lines <strong>155255</strong> and "+
+    "<strong>1800 4254 732</strong>. IRDAI states that if a complaint registered there is not "+
+    "attended to within <strong>15 days</strong>, or the insurer's resolution is unsatisfactory, "+
+    "the Insurance Ombudsman can be approached under the Insurance Ombudsman Rules, 2017 "+
+    "(cioins.co.in).</div>"));
+  body.appendChild(el('<div class="srcline">Source: bimabharosa.irdai.gov.in — Our Process and FAQ. '+
+    "Checked 2026-09-04. No claim-settlement deadline is stated here because none could be "+
+    "verified to a primary source.</div>"));
+
+  sec.appendChild(body);
+  return sec;
+}
+
+function txSection(h){
+  var sec=el('<section class="sheet"><h3>Transaction log · optional</h3></section>');
+  var body=el('<div style="padding:13px 15px"></div>');
+  var tx=(h.tx||[]).slice().sort(function(a,b){ return (parseD(a.date)||0)-(parseD(b.date)||0); });
+
+  if(!tx.length){
+    body.appendChild(el('<div class="note">Empty. Returns for this holding are shown as CAGR, '+
+      "which assumes one lump sum on the start date. Log the actual instalments and it switches "+
+      "to XIRR, which does not.</div>"));
+  } else {
+    tx.forEach(function(t,i){
+      var r=el('<div class="txrow"><span class="d">'+esc(fmtD(t.date))+"</span>"+
+        '<span class="a">'+esc(money(num(t.amount)))+"</span>"+
+        '<button type="button" aria-label="Remove">×</button></div>');
+      r.querySelector("button").onclick=function(){
+        h.tx=h.tx.filter(function(x){ return x!==tx[i]; }); save(); render();
+      };
+      body.appendChild(r);
+    });
+    var total=tx.reduce(function(s,t){ return s+(num(t.amount)||0); },0);
+    body.appendChild(el('<div class="note" style="margin-top:9px">'+tx.length+
+      " entries · " +esc(money(total))+" logged.</div>"));
+  }
+
+  var add=el('<div style="display:flex;gap:8px;margin-top:12px;align-items:flex-end">'+
+    '<div class="field" style="flex:1;margin:0"><label>Date</label>'+
+      '<input type="date" value="'+todayISO()+'"></div>'+
+    '<div class="field" style="flex:1;margin:0"><label>Amount in</label>'+
+      '<input type="number" inputmode="decimal" placeholder="0"></div>'+
+    "</div>");
+  var addBtn=el('<button class="btn ghost sm" type="button" style="margin-top:9px">Add entry</button>');
+  addBtn.onclick=function(){
+    var ins=add.querySelectorAll("input");
+    var d=ins[0].value, a=num(ins[1].value);
+    if(!d||a===null||a<=0){ toast("Need a date and a positive amount."); return; }
+    h.tx=h.tx||[]; h.tx.push({date:d,amount:a}); save(); render();
+  };
+  body.appendChild(add); body.appendChild(addBtn);
+
+  if(h.type==="mf"&&h.sipAmt&&h.sipDay&&h.startDate&&(!h.tx||!h.tx.length)){
+    var gen=el('<button class="btn ghost sm" type="button" style="margin-top:9px;margin-left:8px">'+
+      "Fill from SIP history</button>");
+    gen.onclick=function(){
+      var s=parseD(h.startDate); if(!s){ toast("Set a start date first."); return; }
+      var day=Math.min(Math.max(parseInt(h.sipDay,10)||1,1),28);
+      var amt=num(h.sipAmt), step={"Monthly":1,"Quarterly":3}[h.freq||"Monthly"]||1;
+      var d=new Date(s.getFullYear(),s.getMonth(),day), now=new Date(), out=[],guard=0;
+      if(d<s) d.setMonth(d.getMonth()+step);
+      while(d<=now&&guard++<600){ out.push({date:iso(d),amount:amt}); d.setMonth(d.getMonth()+step); }
+      if(!out.length){ toast("No instalments fall between the start date and today."); return; }
+      if(!confirm("Add "+out.length+" instalments of "+money(amt)+
+        "?\n\nThis assumes every one went through on time at the same amount. "+
+        "Correct any that did not.")) return;
+      h.tx=out; save(); toast(out.length+" instalments added — check them."); render();
+    };
+    body.appendChild(gen);
+  }
+
+  sec.appendChild(body);
+  return sec;
+}
+
+/* ============================================================
+   10 · Edit / add form
+   ============================================================ */
+function inputFor(f,val,idPrefix){
+  var id=idPrefix+"_"+f.k;
+  var common='id="'+id+'" data-k="'+f.k+'"';
+  var h="";
+  if(f.t==="select"){
+    h='<select '+common+"><option value=\"\"></option>"+
+      f.o.map(function(o){ return '<option'+(val===o?" selected":"")+">"+esc(o)+"</option>"; }).join("")+
+      "</select>";
+  } else if(f.t==="textarea"){
+    h='<textarea '+common+">"+esc(val||"")+"</textarea>";
+  } else {
+    var type=f.t==="date"?"date":(f.t==="money"||f.t==="number"||f.t==="int")?"number":
+             f.t==="tel"?"tel":"text";
+    var extra=(f.t==="money"||f.t==="number")?' inputmode="decimal" step="any"':
+              f.t==="int"?' inputmode="numeric" step="1"':"";
+    var cls=(f.t==="mono")?' class="mono"':"";
+    h='<input type="'+type+'"'+extra+cls+" "+common+' value="'+esc(val||"")+'"'+
+      (f.ph?' placeholder="'+esc(f.ph)+'"':"")+">";
+  }
+  return '<div class="field"><label for="'+id+'">'+esc(f.l)+
+    (f.req?' <span class="dim">· required</span>':"")+"</label>"+h+
+    (f.hint?'<div class="hint">'+esc(f.hint)+"</div>":"")+"</div>";
+}
+
+function buildForm(container,type,h,idPrefix){
+  var def=TYPES[type];
+  var grp=el('<div class="fgroup"><div class="gl">'+esc(def.label)+"</div></div>");
+  def.fields.forEach(function(f){ grp.appendChild(el(inputFor(f,h[f.k],idPrefix))); });
+  container.appendChild(grp);
+
+  /* nominees */
+  var ng=el('<div class="fgroup"><div class="gl">Nominees</div>'+
+    '<div class="note" style="margin-bottom:11px">'+esc(NOMINEE_HELP)+"</div></div>");
+  var nlist=el("<div></div>");
+  h.nominees=h.nominees||[];
+  function drawN(){
+    nlist.innerHTML="";
+    h.nominees.forEach(function(n,i){
+      var box=el('<div style="border:1px solid var(--rule);border-radius:6px;'+
+        'padding:11px;margin-bottom:9px;background:var(--paper)"></div>');
+      box.appendChild(el('<div class="f2">'+
+        '<div class="field"><label>Name</label><input data-n="name" value="'+esc(n.name||"")+'"></div>'+
+        '<div class="field"><label>Relationship</label><input data-n="relation" value="'+esc(n.relation||"")+'"></div>'+
+        "</div>"));
+      box.appendChild(el('<div class="f2">'+
+        '<div class="field"><label>Share %</label><input type="number" inputmode="decimal" step="any" '+
+          'data-n="share" value="'+esc(n.share||"")+'"></div>'+
+        '<div class="field"><label>Phone</label><input type="tel" data-n="contact" value="'+esc(n.contact||"")+'"></div>'+
+        "</div>"));
+      var rm=el('<button class="btn ghost sm" type="button">Remove nominee</button>');
+      rm.onclick=function(){ h.nominees.splice(i,1); drawN(); };
+      box.appendChild(rm);
+      Array.prototype.forEach.call(box.querySelectorAll("[data-n]"),function(inp){
+        inp.oninput=function(){ n[inp.dataset.n]=inp.value; };
+      });
+      nlist.appendChild(box);
+    });
+    if(h.nominees.length>1){
+      var tot=h.nominees.reduce(function(s,n){ return s+(num(n.share)||0); },0);
+      nlist.appendChild(el('<div class="note'+(Math.abs(tot-100)>0.01?' neg':'')+
+        '">Shares total '+tot+"%.</div>"));
+    }
+  }
+  drawN();
+  ng.appendChild(nlist);
+  var addN=el('<button class="btn ghost sm" type="button" style="margin-top:6px">+ Add nominee</button>');
+  addN.onclick=function(){
+    h.nominees.push({name:"",relation:"",share:h.nominees.length?"":"100",contact:""}); drawN();
+  };
+  ng.appendChild(addN);
+  container.appendChild(ng);
+
+  /* goal + notes + attachment */
+  var og=el('<div class="fgroup"><div class="gl">Tagging and papers</div></div>');
+  og.appendChild(el('<div class="field"><label for="'+idPrefix+'_goal">Goal</label>'+
+    '<select id="'+idPrefix+'_goal" data-k="goalId"><option value="">Not tagged</option>'+
+    S.goals.map(function(g){
+      return '<option value="'+esc(g.id)+'"'+(h.goalId===g.id?" selected":"")+">"+esc(g.name)+"</option>";
+    }).join("")+"</select></div>"));
+  og.appendChild(el('<div class="field"><label for="'+idPrefix+'_notes">Notes</label>'+
+    '<textarea id="'+idPrefix+'_notes" data-k="notes">'+esc(h.notes||"")+"</textarea></div>"));
+
+  var fw=el('<div class="field"><label>Attach a photo of the document · optional</label>'+
+    '<input type="file" accept="image/*,application/pdf">'+
+    '<div class="hint">Kept on this phone, inside the app’s own storage. '+
+    "Large files fill that storage quickly and make the export unwieldy, so keep them small "+
+    "and few. Anything over 400 KB is refused.</div></div>");
+  var flist=el("<div></div>");
+  h.files=h.files||[];
+  function drawF(){
+    flist.innerHTML="";
+    h.files.forEach(function(f,i){
+      var r=el('<div class="txrow"><span style="flex:1;font-size:12.5px">'+esc(f.name)+
+        '</span><span class="d">'+Math.round(f.size/1024)+" KB</span>"+
+        '<button type="button">×</button></div>');
+      r.querySelector("button").onclick=function(){ h.files.splice(i,1); drawF(); };
+      flist.appendChild(r);
+    });
+  }
+  drawF();
+  fw.querySelector("input").onchange=function(ev){
+    var file=ev.target.files&&ev.target.files[0];
+    if(!file) return;
+    if(file.size>400*1024){ toast("That file is "+Math.round(file.size/1024)+" KB. Limit is 400 KB."); ev.target.value=""; return; }
+    var rd=new FileReader();
+    rd.onload=function(){ h.files.push({name:file.name,size:file.size,data:rd.result}); drawF(); ev.target.value=""; };
+    rd.onerror=function(){ toast("Could not read that file."); };
+    rd.readAsDataURL(file);
+  };
+  og.appendChild(fw); og.appendChild(flist);
+  container.appendChild(og);
+}
+
+function collectForm(container,type,h,idPrefix){
+  var def=TYPES[type];
+  def.fields.forEach(function(f){
+    var e=container.querySelector("#"+idPrefix+"_"+f.k);
+    if(e) h[f.k]=e.value.trim();
+  });
+  var g=container.querySelector("#"+idPrefix+"_goal"); if(g) h.goalId=g.value||null;
+  var n=container.querySelector("#"+idPrefix+"_notes"); if(n) h.notes=n.value;
+  h.nominees=(h.nominees||[]).filter(function(x){ return x.name&&x.name.trim(); });
+  return h;
+}
+function validate(type,h){
+  var missing=TYPES[type].fields.filter(function(f){
+    return f.req && !(h[f.k]&&String(h[f.k]).trim());
+  });
+  return missing.map(function(f){ return f.l; });
+}
+
+function viewEdit(){
+  var isNew=route.arg==="new";
+  var h=isNew?{id:uid(),type:null,nominees:[],files:[],tx:[]}:JSON.parse(JSON.stringify(findH(route.arg)||{}));
+  if(!isNew&&!h.id){ go("holdings"); return; }
+  h.nominees=h.nominees||[]; h.files=h.files||[]; h.tx=h.tx||[];
+
+  var back=el('<button class="iconbtn" type="button" style="margin-bottom:14px">← Cancel</button>');
+  back.onclick=function(){ isNew?go("holdings"):go("detail",h.id); };
+  view.appendChild(back);
+
+  view.appendChild(el("<h1 style=\"font-size:24px;margin-bottom:14px\">"+
+    (isNew?"Add a holding":"Edit")+"</h1>"));
+
+  var typeWrap=el('<div class="field"><label for="ed_type">What is it?</label>'+
+    '<select id="ed_type"><option value="">Choose…</option>'+
+    TYPE_ORDER.map(function(k){
+      return '<option value="'+k+'"'+(h.type===k?" selected":"")+">"+esc(TYPES[k].label)+"</option>";
+    }).join("")+"</select></div>");
+  view.appendChild(typeWrap);
+
+  var body=el("<div></div>");
+  view.appendChild(body);
+
+  function draw(){
+    body.innerHTML="";
+    if(!h.type) return;
+    buildForm(body,h.type,h,"ed");
+    var row=el('<div class="btnrow"></div>');
+    var s=el('<button class="btn" type="button">Save</button>');
+    s.onclick=function(){
+      collectForm(body,h.type,h,"ed");
+      var miss=validate(h.type,h);
+      if(miss.length){ toast("Still needed: "+miss.join(", ")); return; }
+      var i=-1;
+      S.holdings.forEach(function(x,ix){ if(x.id===h.id) i=ix; });
+      if(i>=0) S.holdings[i]=h; else S.holdings.push(h);
+      if(save()){ toast("Saved."); go("detail",h.id); }
+    };
+    row.appendChild(s);
+    body.appendChild(row);
+  }
+  typeWrap.querySelector("select").onchange=function(ev){
+    if(h.type&&ev.target.value!==h.type) collectForm(body,h.type,h,"ed");
+    h.type=ev.target.value||null; draw();
+  };
+  draw();
+}
+
+/* ============================================================
+   11 · Due dates view + .ics
+   ============================================================ */
+function viewDue(){
+  var head=el('<div class="section-head"><h2>Every date ahead</h2></div>');
+  view.appendChild(head);
+
+  var horizonDays=route.arg?parseInt(route.arg,10):365;
+  var chips=el('<div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap"></div>');
+  [[30,"30 days"],[90,"90 days"],[365,"1 year"],[0,"Everything"]].forEach(function(o){
+    var on=horizonDays===o[0];
+    var b=el('<button class="iconbtn" type="button"'+
+      (on?' style="border-color:var(--accent);color:var(--accent);background:var(--accent-soft)"':"")+
+      ">"+esc(o[1])+"</button>");
+    b.onclick=function(){ go("due",String(o[0])); };
+    chips.appendChild(b);
+  });
+  view.appendChild(chips);
+
+  var evs=dueEvents(horizonDays||null);
+  if(!evs.length){
+    view.appendChild(el('<div class="empty"><p>No dates in this window.</p></div>'));
+  } else {
+    var wrap=el('<div class="duewrap"></div>');
+    evs.forEach(function(e){ wrap.appendChild(dueRow(e)); });
+    view.appendChild(wrap);
+  }
+
+  view.appendChild(el('<div class="section-head"><h2>Get these into your calendar</h2></div>'));
+  view.appendChild(el('<div class="callout">A page on the internet cannot save a file to your '+
+    "iPhone, and it cannot set an alarm that fires while it is closed. What it can do is put the "+
+    "calendar file on your clipboard. Copy it, mail it to yourself, save the attachment as "+
+    "<strong>duedates.ics</strong>, and open it. iPhone Calendar then does the reminding — "+
+    "which is the part that actually works when you are not looking at this app.</div>"));
+
+  var icsBtn=el('<button class="btn wide" type="button">Copy calendar file</button>');
+  var box=el('<textarea class="exportbox" readonly hidden></textarea>');
+  icsBtn.onclick=function(){
+    var text=buildICS();
+    box.hidden=false; box.value=text;
+    copy(text,"Calendar file copied. Mail it to yourself and save it as duedates.ics");
+  };
+  view.appendChild(icsBtn);
+  view.appendChild(box);
+
+  var ys=el('<button class="btn ghost wide" type="button" style="margin-top:9px">Open the year sheet</button>');
+  ys.onclick=function(){ go("yearsheet"); };
+  view.appendChild(ys);
+}
+
+function icsDate(d){
+  return d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+}
+function icsEsc(s){ return String(s).replace(/([,;\\])/g,"\\$1").replace(/\n/g,"\\n"); }
+function buildICS(){
+  var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Paisa Patra//Personal//EN",
+         "CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:Investment due dates"];
+  var stamp=icsDate(new Date())+"T090000Z";
+  dueEvents(0).forEach(function(e,i){
+    if(e.overdue) return;
+    var rrule={"Monthly":"FREQ=MONTHLY","Quarterly":"FREQ=MONTHLY;INTERVAL=3",
+               "Half-yearly":"FREQ=MONTHLY;INTERVAL=6","Yearly":"FREQ=YEARLY",
+               "Weekly":"FREQ=WEEKLY"}[e.recur];
+    var end=new Date(e.date.getTime()+86400000);
+    L.push("BEGIN:VEVENT");
+    L.push("UID:pp-"+e.id+"-"+e.kind+"-"+i+"@paisapatra.local");
+    L.push("DTSTAMP:"+stamp);
+    L.push("DTSTART;VALUE=DATE:"+icsDate(e.date));
+    L.push("DTEND;VALUE=DATE:"+icsDate(end));
+    if(rrule) L.push("RRULE:"+rrule);
+    L.push("SUMMARY:"+icsEsc(e.title+" — "+e.sub+(e.amount?" ("+money(e.amount)+")":"")));
+    L.push("DESCRIPTION:"+icsEsc("From Paisa Patra. "+e.sub+
+      (e.amount?"\nAmount: "+money(e.amount):"")));
+    L.push("BEGIN:VALARM","TRIGGER:-P3D","ACTION:DISPLAY",
+           "DESCRIPTION:"+icsEsc(e.title+" due in 3 days"),"END:VALARM");
+    L.push("BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY",
+           "DESCRIPTION:"+icsEsc(e.title+" due tomorrow"),"END:VALARM");
+    L.push("END:VEVENT");
+  });
+  L.push("END:VCALENDAR");
+  return L.join("\r\n");
+}
+
+function viewYearSheet(){
+  var back=el('<button class="iconbtn noprint" type="button" style="margin-bottom:14px">← Back</button>');
+  back.onclick=function(){ go("due"); };
+  view.appendChild(back);
+
+  var fy=fyOf(new Date()), r=fyRange(fy);
+  var evs=dueEvents(0).filter(function(e){ return e.date>=r[0]&&e.date<=r[1]; });
+
+  var paper=el('<div class="sheetpaper">'+
+    '<div class="eyebrow">'+esc(fyLabel(fy))+" · 1 April "+fy+" to 31 March "+(fy+1)+"</div>"+
+    "<h2>Money that has to move this year</h2>"+
+    '<div class="note" style="margin-top:6px">'+
+      (S.profile.name?esc(S.profile.name)+" · ":"")+
+      "Prepared "+esc(fmtD(todayISO()))+" from Paisa Patra. Amounts are what was entered, "+
+      "not what any institution has confirmed.</div>"+
+    "</div>");
+
+  if(!evs.length){
+    paper.appendChild(el('<div class="note" style="margin-top:16px">No dates fall inside this financial year.</div>'));
+  } else {
+    var total=0;
+    var rows=evs.map(function(e){
+      if(e.kind!=="maturity"&&e.amount) total+=e.amount;
+      return "<tr><td>"+esc(fmtD(iso(e.date)))+"</td><td><strong>"+esc(e.title)+
+        '</strong><br><span class="dim" style="font-size:11.5px">'+esc(e.sub)+"</span></td>"+
+        '<td class="n">'+(e.amount?esc(money(e.amount)):"—")+"</td></tr>";
+    }).join("");
+    paper.appendChild(el('<div class="tablewrap"><table>'+
+      "<thead><tr><th>Date</th><th>What</th><th style=\"text-align:right\">Amount</th></tr></thead>"+
+      "<tbody>"+rows+"</tbody>"+
+      '<tfoot><tr><td></td><td><strong>Outgoing this year</strong></td>'+
+      '<td class="n"><strong>'+esc(money(total))+"</strong></td></tr></tfoot>"+
+      "</table></div>"));
+    paper.appendChild(el('<div class="note" style="margin-top:12px">'+
+      "The total counts premiums and SIP instalments falling in this financial year. "+
+      "Maturities are listed but not added, since they come in rather than go out.</div>"));
+  }
+  view.appendChild(paper);
+
+  var p=el('<button class="btn wide noprint" type="button" style="margin-top:14px">Print or save as PDF</button>');
+  p.onclick=function(){ window.print(); };
+  view.appendChild(p);
+  view.appendChild(el('<div class="note noprint" style="margin-top:9px">'+
+    "On iPhone: this opens the print sheet — pinch out on the preview to save it to Files as a PDF. "+
+    "If the print dialog does not appear, take a screenshot instead; the page is laid out to fit.</div>"));
+}
+
+/* ============================================================
+   12 · Goals
+   ============================================================ */
+function viewGoals(){
+  var head=el('<div class="section-head"><h2>Goals</h2>'+
+    '<span class="count">'+S.goals.length+"</span>"+
+    '<button class="act" type="button">+ Add</button></div>');
+  view.appendChild(head);
+
+  var form=el('<div class="fgroup" hidden><div class="gl">New goal</div>'+
+    '<div class="field"><label>Name</label><input id="g_name" placeholder="e.g. Retirement"></div>'+
+    '<div class="f2"><div class="field"><label>Target amount</label>'+
+      '<input id="g_target" type="number" inputmode="decimal" step="any"></div>'+
+    '<div class="field"><label>Target date</label><input id="g_date" type="date"></div></div>'+
+    "</div>");
+  var sv=el('<button class="btn sm" type="button">Save goal</button>');
+  sv.onclick=function(){
+    var n=form.querySelector("#g_name").value.trim();
+    if(!n){ toast("A goal needs a name."); return; }
+    S.goals.push({id:uid(),name:n,target:form.querySelector("#g_target").value,
+      targetDate:form.querySelector("#g_date").value});
+    save(); toast("Goal added."); go("goals");
+  };
+  form.appendChild(sv);
+  head.querySelector(".act").onclick=function(){ form.hidden=!form.hidden; };
+  view.appendChild(form);
+
+  if(!S.goals.length){
+    view.appendChild(el('<div class="empty"><p>No goals yet. A goal turns a pile of holdings '+
+      "into a question you can answer: am I on track for this particular thing?</p></div>"));
+    return;
+  }
+  S.goals.forEach(function(g){
+    var b=goalBlock(g);
+    var untagged=S.holdings.filter(function(h){ return h.goalId===g.id; }).length===0;
+    if(untagged){
+      b.appendChild(el('<div class="note" style="margin-top:6px">Nothing is tagged to this goal yet. '+
+        "Edit a holding and pick it under Tagging.</div>"));
+    }
+    var rm=el('<button class="btn ghost sm" type="button" style="margin-top:9px">Remove goal</button>');
+    rm.onclick=function(){
+      if(!confirm("Remove “"+g.name+"”? Holdings stay, they just lose the tag.")) return;
+      S.goals=S.goals.filter(function(x){ return x.id!==g.id; });
+      S.holdings.forEach(function(h){ if(h.goalId===g.id) h.goalId=null; });
+      save(); render();
+    };
+    b.appendChild(rm);
+    view.appendChild(b);
+  });
+}
+
+/* ============================================================
+   13 · Data
+   ============================================================ */
+function copy(text,msg){
+  function fallback(){
+    var ta=document.createElement("textarea");
+    ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    var ok=false;
+    try{ ok=document.execCommand("copy"); }catch(e){ ok=false; }
+    ta.remove();
+    toast(ok?msg:"Copy did not work. Select the text below and copy it by hand.");
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){ toast(msg); },fallback);
+  } else fallback();
+}
+
+function viewData(){
+  view.appendChild(el('<div class="section-head"><h2>Your data</h2></div>'));
+
+  var b=bytes(), capPct=Math.min(b/(4.5*1024*1024),1);
+  view.appendChild(el('<div class="sheet">'+
+    '<h3>What is stored</h3>'+
+    '<dl class="kv"><dt>Holdings</dt><dd class="mono">'+S.holdings.length+"</dd></dl>"+
+    '<dl class="kv"><dt>Goals</dt><dd class="mono">'+S.goals.length+"</dd></dl>"+
+    '<dl class="kv"><dt>Attachments</dt><dd class="mono">'+
+      S.holdings.reduce(function(s,h){ return s+((h.files||[]).length); },0)+"</dd></dl>"+
+    '<dl class="kv"><dt>Size on this phone</dt><dd class="mono">'+Math.round(b/1024)+" KB</dd></dl>"+
+    "</div>"));
+  view.appendChild(el('<div class="meter"><i class="'+(capPct>0.7?"hot":"")+
+    '" style="width:'+(capPct*100).toFixed(1)+'%"></i></div>'));
+  view.appendChild(el('<div class="note" style="margin-top:6px">Browser storage on iOS is '+
+    "limited and can be cleared by the system if the app goes unused for a long time. "+
+    "Export regularly. That is not a formality — it is the only copy that survives.</div>"));
+
+  /* export */
+  view.appendChild(el('<div class="section-head"><h2>Export to the Mac</h2></div>'));
+  view.appendChild(el('<div class="callout">Tap Copy, then paste into Mail or Notes and send it '+
+    "to yourself. On the Mac, save it as <strong>paisa-patra-backup.json</strong> in "+
+    "<strong>~/Desktop/Investment Tracker/backups/</strong>. AirDrop works the same way "+
+    "if you would rather not use mail.</div>"));
+  var expBox=el('<textarea class="exportbox" readonly hidden></textarea>');
+  var expBtn=el('<button class="btn wide" type="button">Copy all data</button>');
+  expBtn.onclick=function(){
+    var t=JSON.stringify(S,null,1);
+    expBox.hidden=false; expBox.value=t;
+    copy(t,"Copied — "+Math.round(t.length/1024)+" KB. Paste it somewhere safe.");
+  };
+  view.appendChild(expBtn); view.appendChild(expBox);
+
+  /* import */
+  view.appendChild(el('<div class="section-head"><h2>Restore</h2></div>'));
+  var impBox=el('<textarea class="exportbox" placeholder="Paste a previous export here"></textarea>');
+  view.appendChild(impBox);
+  var impBtn=el('<button class="btn ghost wide" type="button" style="margin-top:9px">Replace everything with this</button>');
+  impBtn.onclick=function(){
+    var raw=impBox.value.trim();
+    if(!raw){ toast("Nothing pasted."); return; }
+    var d;
+    try{ d=JSON.parse(raw); }catch(e){ toast("That is not valid data — the paste may be truncated."); return; }
+    if(!d||!Array.isArray(d.holdings)){ toast("That does not look like a Paisa Patra export."); return; }
+    if(!confirm("Replace all "+S.holdings.length+" current holdings with the "+d.holdings.length+
+      " in this file? Your current data is overwritten.")) return;
+    S=Object.assign(blank(),d); S.setupDone=true;
+    if(save()){ toast("Restored."); go("home"); }
+  };
+  view.appendChild(impBtn);
+
+  /* claim guide */
+  view.appendChild(el('<div class="section-head"><h2>Reference</h2></div>'));
+  var cg=el('<button class="btn ghost wide" type="button">The claim guide</button>');
+  cg.onclick=function(){ go("claimguide"); };
+  view.appendChild(cg);
+
+  /* danger */
+  view.appendChild(el('<div class="section-head"><h2>Start over</h2></div>'));
+  var row=el('<div class="btnrow"></div>');
+  var wipe=el('<button class="btn danger" type="button">Erase everything</button>');
+  wipe.onclick=function(){
+    if(!confirm("Erase every holding, goal and attachment on this phone?\n\nThere is no undo. "+
+      "Export first if you have not.")) return;
+    if(!confirm("Really erase? Last chance.")) return;
+    S=blank(); save(); go("setup");
+  };
+  row.appendChild(wipe);
+  if(S.sample){
+    var clr=el('<button class="btn ghost" type="button">Clear the sample data</button>');
+    clr.onclick=function(){
+      var keep=S.profile;
+      S=blank(); S.profile=keep; S.setupDone=false; save(); go("setup");
+    };
+    row.appendChild(clr);
+  }
+  view.appendChild(row);
+
+  view.appendChild(el('<div class="note" style="margin-top:22px">'+
+    "Paisa Patra keeps a record. It does not recommend, rank, rate or advise on anything, "+
+    "and it never will — that is a job for a licensed adviser, not a page of JavaScript.</div>"));
+}
+
+function viewClaimGuide(){
+  var back=el('<button class="iconbtn" type="button" style="margin-bottom:14px">← Data</button>');
+  back.onclick=function(){ go("data"); };
+  view.appendChild(back);
+
+  view.appendChild(el("<h1 style=\"font-size:25px;margin-bottom:8px\">The claim guide</h1>"));
+  view.appendChild(el('<div class="note" style="margin-bottom:16px">Written for whoever has to do '+
+    "this, which may not be you. Every line below came from LIC's and IRDAI's own published pages "+
+    "on 4 September 2026, and every line still needs checking against the actual policy document.</div>"));
+
+  view.appendChild(el('<section class="sheet"><h3>Step one</h3>'+
+    '<div style="padding:13px 15px;font-size:13.5px;line-height:1.6">'+
+    "The person legally entitled to the money gives intimation of the death to the "+
+    "<strong>servicing branch</strong>. The branch then issues the claim forms and instructions. "+
+    "You do not need to assemble everything before making that first call.</div></section>"));
+
+  var docs=el('<section class="sheet"><h3>What the branch will ask for</h3>'+
+    '<div style="padding:13px 15px"></div></section>');
+  var d=docs.querySelector("div");
+  CLAIM_DOCS.forEach(function(t){ d.appendChild(el('<div class="check"><span>•</span><span>'+esc(t)+"</span></div>")); });
+  d.appendChild(el('<div class="srcline">'+esc(CLAIM_SRC)+"</div>"));
+  view.appendChild(docs);
+
+  view.appendChild(el('<section class="sheet"><h3>The three-year line</h3>'+
+    '<div style="padding:13px 15px;font-size:13.5px;line-height:1.6">'+
+    "LIC distinguishes deaths occurring <strong>within three years</strong> of the date of "+
+    "commencement of risk, or of a revival or reinstatement, from those occurring after. "+
+    "Where the death falls after three years and premiums are paid up to date — or the death "+
+    "happened inside the days of grace — the claim amount is payable. Inside three years, "+
+    "the branch states additional requirements. Each policy in this app shows its own "+
+    "three-year date on its page."+
+    '<div class="srcline">'+esc(CLAIM_SRC)+"</div></div></section>"));
+
+  view.appendChild(el('<section class="sheet"><h3>If it stalls</h3>'+
+    '<div style="padding:13px 15px;font-size:13.5px;line-height:1.6">'+
+    "Complain to the insurer first. Then IRDAI's Bima Bharosa portal at "+
+    "<strong>bimabharosa.irdai.gov.in</strong> — or complaints@irdai.gov.in, or the toll-free "+
+    "numbers <strong>155255</strong> and <strong>1800 4254 732</strong>. The complaint gets a "+
+    "token number and an acknowledgement. IRDAI states that if it is not attended to within "+
+    "<strong>15 days</strong> of registration there, or the insurer's resolution is not "+
+    "satisfactory, the <strong>Insurance Ombudsman</strong> can be approached under the "+
+    "Insurance Ombudsman Rules, 2017, at cioins.co.in. The Ombudsman is a quasi-judicial body "+
+    "and costs nothing to approach."+
+    '<div class="srcline">Source: bimabharosa.irdai.gov.in — Our Process and FAQ. '+
+    "Checked 2026-09-04.</div></div></section>"));
+
+  view.appendChild(el('<div class="callout"><strong>One warning IRDAI prints itself:</strong> '+
+    "the Bima Bharosa portal never asks anyone for a payment of any kind, and never asks you "+
+    "to scan a QR code to receive a disbursement. Anything that does is a fraud."+
+    '<div class="srcline">Source: bimabharosa.irdai.gov.in. Checked 2026-09-04.</div></div>'));
+
+  view.appendChild(el('<div class="callout"><strong>Not stated here:</strong> any deadline by which '+
+    "a claim must be settled. IRDAI's 2024 policyholder-protection regulations require insurers "+
+    "to publish board-approved turnaround times, but no specific day-count could be confirmed to "+
+    "a primary source, so none is claimed. Do not accept one from memory — anyone's.</div>"));
+}
+
+/* ============================================================
+   14 · First-run setup
+   ============================================================ */
+var wiz={step:0, draft:null, editIdx:-1};
+var STEPS=[
+  {id:"welcome",title:"Everything in one place",
+   blurb:"Set it up once, in one sitting. Eight sections, and you can skip any of them and come back."},
+  {id:"you",title:"Who this belongs to",
+   blurb:"Only so the printed year sheet has a name on it. It stays on this phone."},
+  {id:"goals",title:"What is the money for?",
+   blurb:"Name the goals first, and every holding you add afterwards can be tagged to one. Skip it and tag later."},
+  {id:"mf",title:"Mutual funds"},
+  {id:"shares",title:"Shares"},
+  {id:"lic",title:"LIC and endowment policies"},
+  {id:"term",title:"Term insurance"},
+  {id:"fd",title:"Fixed deposits"},
+  {id:"ppf",title:"PPF"},
+  {id:"epfnps",title:"EPF and NPS"},
+  {id:"ssy",title:"Sukanya Samriddhi"},
+  {id:"done",title:"That is the record",blurb:""}
+];
+
+function viewSetup(){
+  var wrap=el('<div class="wiz"></div>');
+  var rail=el('<div class="wizrail">'+STEPS.map(function(s,i){
+    return '<i class="'+(i<wiz.step?"did":i===wiz.step?"on":"")+'"></i>';
+  }).join("")+"</div>");
+  wrap.appendChild(rail);
+  var st=STEPS[wiz.step];
+
+  var head=el('<div class="wizhead">'+
+    '<div class="step">Step '+(wiz.step+1)+" of "+STEPS.length+"</div>"+
+    "<h1>"+esc(st.title)+"</h1>"+
+    (st.blurb?"<p>"+esc(st.blurb)+"</p>":"")+"</div>");
+  wrap.appendChild(head);
+
+  if(st.id==="welcome") stepWelcome(wrap);
+  else if(st.id==="you") stepYou(wrap);
+  else if(st.id==="goals") stepGoals(wrap);
+  else if(st.id==="done") stepDone(wrap);
+  else stepType(wrap,st.id);
+
+  view.appendChild(wrap);
+}
+
+function wizNav(wrap,opts){
+  opts=opts||{};
+  var f=el('<div class="wizfoot"></div>');
+  if(wiz.step>0){
+    var b=el('<button class="btn ghost" type="button">Back</button>');
+    b.onclick=function(){ wiz.step--; wiz.draft=null; wiz.editIdx=-1; render(); };
+    f.appendChild(b);
+  }
+  f.appendChild(el('<div class="spacer"></div>'));
+  var n=el('<button class="btn" type="button">'+esc(opts.nextLabel||"Continue")+"</button>");
+  n.onclick=function(){
+    if(opts.before&&opts.before()===false) return;
+    wiz.step++; wiz.draft=null; wiz.editIdx=-1; save(); render();
+  };
+  f.appendChild(n);
+  wrap.appendChild(f);
+}
+
+function stepWelcome(wrap){
+  wrap.appendChild(el('<ul class="welcome-list">'+
+    TYPE_ORDER.map(function(k,i){
+      return "<li><span class=\"n\">"+String(i+1).padStart(2,"0")+"</span>"+
+        "<span>"+esc(TYPES[k].plural)+"</span>"+
+        '<span class="d">'+esc(TYPES[k].kind==="cover"?"cover":"value")+"</span></li>";
+    }).join("")+"</ul>"));
+
+  wrap.appendChild(el('<div class="callout info" style="margin-top:18px">'+
+    "Have your policy bonds, FD receipts and last fund statements to hand. "+
+    "Everything you type stays on this phone — nothing is sent anywhere, because there is "+
+    "nowhere for it to be sent to.</div>"));
+
+  var f=el('<div class="wizfoot"></div>');
+  var samp=el('<button class="btn ghost" type="button">Look around first</button>');
+  samp.onclick=function(){
+    if(S.holdings.length&&!confirm("This replaces what is entered so far with sample figures. Continue?")) return;
+    loadSample(); toast("Sample data loaded — these are not your figures."); go("home");
+  };
+  f.appendChild(samp);
+  f.appendChild(el('<div class="spacer"></div>'));
+  var n=el('<button class="btn" type="button">Start</button>');
+  n.onclick=function(){ wiz.step++; render(); };
+  f.appendChild(n);
+  wrap.appendChild(f);
+}
+
+function stepYou(wrap){
+  var g=el('<div class="fgroup">'+
+    '<div class="field"><label for="p_name">Your name</label>'+
+      '<input id="p_name" value="'+esc(S.profile.name||"")+'" placeholder="Optional"></div>'+
+    '<div class="field"><label for="p_city">City</label>'+
+      '<input id="p_city" value="'+esc(S.profile.city||"")+'" placeholder="Optional"></div>'+
+    "</div>");
+  wrap.appendChild(g);
+  wizNav(wrap,{before:function(){
+    S.profile.name=g.querySelector("#p_name").value.trim();
+    S.profile.city=g.querySelector("#p_city").value.trim();
+  }});
+}
+
+function stepGoals(wrap){
+  var list=el("<div></div>");
+  function draw(){
+    list.innerHTML="";
+    S.goals.forEach(function(gl,i){
+      var c=el('<div class="entrycard"><div class="mid"><div class="t">'+esc(gl.name)+"</div>"+
+        '<div class="s">'+(gl.target?esc(moneyShort(num(gl.target))):"No target")+
+        (gl.targetDate?" by "+esc(fmtD(gl.targetDate)):"")+"</div></div>"+
+        '<button type="button" class="x">Remove</button></div>');
+      c.querySelector("button").onclick=function(){ S.goals.splice(i,1); save(); draw(); };
+      list.appendChild(c);
+    });
+    if(!S.goals.length) list.appendChild(el('<div class="note">None yet.</div>'));
+  }
+  draw();
+  wrap.appendChild(list);
+
+  var g=el('<div class="fgroup" style="margin-top:14px"><div class="gl">Add a goal</div>'+
+    '<div class="field"><label>Name</label><input id="wg_name" placeholder="e.g. Daughter’s education"></div>'+
+    '<div class="f2"><div class="field"><label>Target amount</label>'+
+      '<input id="wg_target" type="number" inputmode="decimal" step="any"></div>'+
+    '<div class="field"><label>Needed by</label><input id="wg_date" type="date"></div></div>'+
+    "</div>");
+  var add=el('<button class="btn ghost sm" type="button">Add goal</button>');
+  add.onclick=function(){
+    var n=g.querySelector("#wg_name").value.trim();
+    if(!n){ toast("A goal needs a name."); return; }
+    S.goals.push({id:uid(),name:n,target:g.querySelector("#wg_target").value,
+      targetDate:g.querySelector("#wg_date").value});
+    save();
+    g.querySelector("#wg_name").value=""; g.querySelector("#wg_target").value="";
+    g.querySelector("#wg_date").value="";
+    draw();
+  };
+  g.appendChild(add);
+  wrap.appendChild(g);
+  wizNav(wrap,{nextLabel:S.goals.length?"Continue":"Skip for now"});
+}
+
+function stepType(wrap,type){
+  var def=TYPES[type];
+  var mine=S.holdings.filter(function(h){ return h.type===type; });
+
+  var list=el("<div></div>");
+  function draw(){
+    mine=S.holdings.filter(function(h){ return h.type===type; });
+    list.innerHTML="";
+    mine.forEach(function(h){
+      var v=def.kind==="cover"?num(h.sumAssured):holdingCurrent(h);
+      var c=el('<div class="entrycard"><div class="mid"><div class="t">'+esc(h.name)+"</div>"+
+        '<div class="s">'+esc(moneyShort(v))+(def.kind==="cover"?" cover":"")+
+        (h.policyNo?" · "+esc(h.policyNo):h.folio?" · "+esc(h.folio):"")+"</div></div>"+
+        '<button type="button" class="x">Remove</button></div>');
+      c.querySelector("button").onclick=function(){
+        S.holdings=S.holdings.filter(function(x){ return x.id!==h.id; }); save(); draw();
+      };
+      list.appendChild(c);
+    });
+    if(!mine.length) list.appendChild(el('<div class="note">Nothing added in this section yet.</div>'));
+  }
+  draw();
+  wrap.appendChild(list);
+
+  var formWrap=el('<div hidden style="margin-top:14px"></div>');
+  wrap.appendChild(formWrap);
+
+  var openBtn=el('<button class="btn ghost wide" type="button" style="margin-top:12px">+ Add '+
+    esc(def.label.toLowerCase())+"</button>");
+  openBtn.onclick=function(){
+    wiz.draft={id:uid(),type:type,nominees:[],files:[],tx:[]};
+    formWrap.hidden=false; formWrap.innerHTML="";
+    buildForm(formWrap,type,wiz.draft,"wz");
+    var row=el('<div class="btnrow"></div>');
+    var sv=el('<button class="btn" type="button">Add this one</button>');
+    sv.onclick=function(){
+      collectForm(formWrap,type,wiz.draft,"wz");
+      var miss=validate(type,wiz.draft);
+      if(miss.length){ toast("Still needed: "+miss.join(", ")); return; }
+      S.holdings.push(wiz.draft); save(); wiz.draft=null;
+      formWrap.hidden=true; formWrap.innerHTML=""; openBtn.hidden=false;
+      draw(); toast("Added.");
+    };
+    var cx=el('<button class="btn ghost" type="button">Cancel</button>');
+    cx.onclick=function(){
+      wiz.draft=null; formWrap.hidden=true; formWrap.innerHTML=""; openBtn.hidden=false;
+    };
+    row.appendChild(sv); row.appendChild(cx);
+    formWrap.appendChild(row);
+    openBtn.hidden=true;
+    formWrap.scrollIntoView({behavior:"smooth",block:"start"});
+  };
+  wrap.appendChild(openBtn);
+
+  wizNav(wrap,{nextLabel:mine.length?"Continue":"I have none of these",
+    before:function(){
+      if(wiz.draft&&!formWrap.hidden){
+        if(!confirm("There is an unsaved entry on screen. Move on and lose it?")) return false;
+      }
+    }});
+}
+
+function stepDone(wrap){
+  var t=netWorth();
+  wrap.appendChild(el('<section class="band">'+
+    '<div class="lbl">Recorded</div>'+
+    '<div class="big">'+esc(money(t.current))+"</div>"+
+    '<div class="sub">'+S.holdings.length+" holding"+(S.holdings.length===1?"":"s")+
+      " across "+TYPE_ORDER.filter(function(k){
+        return S.holdings.some(function(h){ return h.type===k; }); }).length+
+      " types"+(t.cover>0?", plus "+esc(moneyShort(t.cover))+" of life cover":"")+"</div>"+
+    "</section>"));
+
+  var missingVals=S.holdings.filter(function(h){
+    return TYPES[h.type].kind!=="cover"&&holdingCurrent(h)===null;
+  });
+  if(missingVals.length){
+    wrap.appendChild(el('<div class="callout" style="margin-top:16px">'+
+      missingVals.length+" holding"+(missingVals.length>1?"s have":" has")+
+      " no current value, so "+(missingVals.length>1?"they are":"it is")+" not in that total: "+
+      esc(missingVals.map(function(h){ return h.name; }).join(", "))+".</div>"));
+  }
+
+  wrap.appendChild(el('<div class="note" style="margin-top:16px">Two things worth doing now, '+
+    "while you are still sitting down with the papers:<br><br>"+
+    "<strong>1.</strong> Go to Due, copy the calendar file, mail it to yourself and open it. "+
+    "That is what will actually remind you about a premium.<br>"+
+    "<strong>2.</strong> Go to Data and copy an export. Until you do, this exists in one place only.</div>"));
+
+  var f=el('<div class="wizfoot"></div>');
+  var b=el('<button class="btn ghost" type="button">Back</button>');
+  b.onclick=function(){ wiz.step--; render(); };
+  f.appendChild(b);
+  f.appendChild(el('<div class="spacer"></div>'));
+  var n=el('<button class="btn" type="button">Open the app</button>');
+  n.onclick=function(){ S.setupDone=true; save(); go("home"); };
+  f.appendChild(n);
+  wrap.appendChild(f);
+}
+
+/* ============================================================
+   15 · Sample data — clearly labelled, never confusable with real figures
+   ============================================================ */
+function loadSample(){
+  var y=new Date().getFullYear();
+  var keep=S.profile;
+  S=blank();
+  S.profile=keep.name?keep:{name:"Sample record",city:""};
+  S.sample=true; S.setupDone=true;
+  var g1={id:uid(),name:"Retirement",target:"20000000",targetDate:(y+22)+"-04-01"};
+  var g2={id:uid(),name:"Emergency fund",target:"1200000",targetDate:""};
+  S.goals=[g1,g2];
+  S.holdings=[
+    {id:uid(),type:"mf",name:"SAMPLE Flexi Cap Fund – Direct Growth",amc:"Sample AMC",
+     folio:"1234567/89",cat:"Equity",mode:"SIP",sipAmt:"15000",sipDay:"5",freq:"Monthly",
+     units:"4210.55",invested:"900000",current:"1284000",startDate:(y-5)+"-04-05",
+     goalId:g1.id,nominees:[{name:"Sample nominee",relation:"Spouse",share:"100",contact:""}],files:[],tx:[]},
+    {id:uid(),type:"shares",name:"SAMPLE Industries Ltd",exch:"NSE",qty:"120",avgPrice:"1450",
+     curPrice:"1712",demat:"IN30000000000000",broker:"Sample Securities",startDate:(y-3)+"-07-18",
+     nominees:[],files:[],tx:[]},
+    {id:uid(),type:"lic",name:"SAMPLE Jeevan Plan",insurer:"Life Insurance Corporation of India",
+     policyNo:"000000000",planNo:"149",sumAssured:"1000000",premium:"48200",freq:"Yearly",
+     nextDue:(y+ (new Date().getMonth()>2?0:0))+"-11-28",riskDate:(y-9)+"-11-28",term:"21",
+     pptTerm:"21",maturity:(y+12)+"-11-28",bonus:"312000",invested:"433800",current:"520000",
+     branch:"Sample Branch, Delhi",agentName:"Sample Agent",agentPhone:"",helpline:"",
+     goalId:g1.id,nominees:[{name:"Sample nominee",relation:"Spouse",share:"60",contact:""},
+       {name:"Second nominee",relation:"Child",share:"40",contact:""}],files:[],tx:[]},
+    {id:uid(),type:"term",name:"SAMPLE Term Plan",insurer:"Sample Life Insurance Co.",
+     policyNo:"TP00000000",sumAssured:"15000000",premium:"18700",freq:"Yearly",
+     nextDue:(y+1)+"-02-14",riskDate:(y-4)+"-02-14",coverEnd:(y+31)+"-02-14",
+     riders:"Accidental death benefit",nominees:[{name:"Sample nominee",relation:"Spouse",share:"100",contact:""}],
+     files:[],tx:[]},
+    {id:uid(),type:"fd",name:"SAMPLE Bank",fdNo:"FD0000123",invested:"500000",rate:"7.1",
+     startDate:(y-1)+"-06-10",maturity:(y+1)+"-06-10",payout:"Cumulative (at maturity)",
+     autoRenew:"No",branch:"Sample Branch",goalId:g2.id,nominees:[],files:[],tx:[]},
+    {id:uid(),type:"ppf",name:"SAMPLE Bank – PPF",acctNo:"PPF0000000",startDate:(y-8)+"-04-12",
+     maturity:(y+7)+"-03-31",fyContrib:"150000",invested:"1050000",current:"1486000",
+     extension:"Original 15-year term",goalId:g1.id,nominees:[],files:[],tx:[]},
+    {id:uid(),type:"epfnps",name:"SAMPLE EPF – current employer",scheme:"EPF",
+     acctNo:"100000000000",employer:"Sample Employer Pvt Ltd",invested:"820000",current:"962000",
+     asOf:y+"-03-31",goalId:g1.id,nominees:[],files:[],tx:[]}
+  ];
+  save();
+}
+
+/* ============================================================
+   16 · Theme toggle + boot
+   ============================================================ */
+document.getElementById("themebtn").onclick=function(){
+  var cur=document.documentElement.getAttribute("data-theme");
+  var next=cur==="dark"?"light":cur==="light"?null:"dark";
+  if(next) document.documentElement.setAttribute("data-theme",next);
+  else document.documentElement.removeAttribute("data-theme");
+  try{ next?localStorage.setItem(KEY+".theme",next):localStorage.removeItem(KEY+".theme"); }catch(e){}
+  toast(next?(next==="dark"?"Dark":"Light"):"Following your phone");
+};
+try{
+  var th=localStorage.getItem(KEY+".theme");
+  if(th) document.documentElement.setAttribute("data-theme",th);
+}catch(e){}
+
+S=load();
+if(!S){ S=blank(); }
+if(!S.claimChecks) S.claimChecks={};
+if(!Array.isArray(S.goals)) S.goals=[];
+if(!Array.isArray(S.holdings)) S.holdings=[];
+route = S.setupDone ? {name:"home",arg:null} : {name:"setup",arg:null};
+render();
+
+})();
+</script>
