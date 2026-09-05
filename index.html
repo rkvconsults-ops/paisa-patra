@@ -386,7 +386,7 @@ if("serviceWorker" in navigator){
    1 · Storage
    ============================================================ */
 var KEY="paisapatra.v1";
-var APP_VERSION="v5 · 5 Sep 2026";
+var APP_VERSION="v6 · 5 Sep 2026";
 var S=null;
 
 function blank(){
@@ -1802,6 +1802,28 @@ function viewData(){
     if(save()){ toast("Restored."); go("home"); }
   };
   view.appendChild(impBtn);
+
+  /* force a fresh build past the offline cache — data is untouched */
+  var upd=el('<button class="btn ghost wide" type="button" style="margin-top:12px">'+
+    "Check for a newer version</button>");
+  upd.onclick=async function(){
+    upd.textContent="Checking…";
+    try{
+      if("serviceWorker" in navigator){
+        var rs=await navigator.serviceWorker.getRegistrations();
+        await Promise.all(rs.map(function(r){ return r.unregister(); }));
+      }
+      if(window.caches){
+        var ks=await caches.keys();
+        await Promise.all(ks.map(function(k){ return caches.delete(k); }));
+      }
+    }catch(e){ /* offline, or storage blocked: reload anyway */ }
+    location.reload(true);
+  };
+  view.appendChild(upd);
+  view.appendChild(el('<div class="note" style="margin-top:6px">Clears the offline copy and '+
+    "fetches the current build. Your holdings, goals and attachments are not touched — "+
+    "they live in a different store. Needs a connection.</div>"));
 
   /* reopen setup as a bulk-entry mode */
   view.appendChild(el('<div class="section-head"><h2>Setup questionnaire</h2></div>'));
