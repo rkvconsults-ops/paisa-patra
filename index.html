@@ -106,6 +106,8 @@ button,input,select,textarea{font:inherit;color:inherit}
   padding:6px 10px;font-size:12.5px;font-weight:500;color:var(--ink-2);cursor:pointer
 }
 .iconbtn:hover{border-color:var(--rule-strong);color:var(--ink)}
+.iconbtn.warnbtn{border-color:var(--warn);color:var(--warn);background:var(--warn-soft);font-weight:600}
+.iconbtn.warnbtn:hover{border-color:var(--warn);color:var(--warn)}
 
 .view{padding:18px 16px 96px}
 .tabbar{
@@ -349,6 +351,7 @@ button,input,select,textarea{font:inherit;color:inherit}
     <div class="mark">प</div>
     <div class="brand">Paisa Patra<small id="brandsub">Personal record</small></div>
     <div class="spacer"></div>
+    <button class="iconbtn warnbtn" id="samplebtn" type="button" hidden>Exit sample</button>
     <button class="iconbtn" id="themebtn" type="button">Theme</button>
   </header>
   <main class="view" id="view"></main>
@@ -383,6 +386,7 @@ if("serviceWorker" in navigator){
    1 · Storage
    ============================================================ */
 var KEY="paisapatra.v1";
+var APP_VERSION="v5 · 5 Sep 2026";
 var S=null;
 
 function blank(){
@@ -848,7 +852,14 @@ function renderTabs(){
 function render(){
   renderTabs();
   document.getElementById("brandsub").textContent =
+    S.sample ? "Sample data" :
     S.setupDone ? (S.profile.name ? S.profile.name : "Personal record") : "Setup";
+  var sb=document.getElementById("samplebtn");
+  sb.hidden=!S.sample;
+  sb.onclick=function(){
+    var keep=S.profile;
+    S=blank(); S.profile=keep; openSetup(false);
+  };
   var f={home:viewHome,holdings:viewHoldings,due:viewDue,goals:viewGoals,data:viewData,
          detail:viewDetail,edit:viewEdit,yearsheet:viewYearSheet,claimguide:viewClaimGuide,
          setup:viewSetup}[route.name];
@@ -885,9 +896,9 @@ function viewHome(){
   }
   if(S.sample){
     var sc=el('<div class="callout"><strong>This is sample data</strong>, not your portfolio. '+
-      "Clearing it reopens the setup questionnaire.</div>");
+      "Leaving it takes you back to the setup questionnaire.</div>");
     var scb=el('<button class="btn sm" type="button" style="margin-top:10px">'+
-      "Clear sample and set up</button>");
+      "Back to setup</button>");
     scb.onclick=function(){
       var keep=S.profile;
       S=blank(); S.profile=keep; openSetup(false);
@@ -1751,6 +1762,7 @@ function viewData(){
     '<dl class="kv"><dt>Attachments</dt><dd class="mono">'+
       S.holdings.reduce(function(s,h){ return s+((h.files||[]).length); },0)+"</dd></dl>"+
     '<dl class="kv"><dt>Size on this phone</dt><dd class="mono">'+Math.round(b/1024)+" KB</dd></dl>"+
+    '<dl class="kv"><dt>App version</dt><dd class="mono">'+esc(APP_VERSION)+"</dd></dl>"+
     "</div>"));
   view.appendChild(el('<div class="meter"><i class="'+(capPct>0.7?"hot":"")+
     '" style="width:'+(capPct*100).toFixed(1)+'%"></i></div>'));
