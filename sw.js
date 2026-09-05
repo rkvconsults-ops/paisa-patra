@@ -1,6 +1,6 @@
 /* Paisa Patra offline cache.
    Bump CACHE when index.html changes, or phones keep serving the old copy. */
-var CACHE = "paisa-patra-v3";
+var CACHE = "paisa-patra-v4";
 var ASSETS = ["./", "./index.html", "./manifest.webmanifest",
               "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 

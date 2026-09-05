@@ -813,6 +813,15 @@ function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(
 var route={name:"home",arg:null};
 function go(name,arg){ route={name:name,arg:arg||null}; render(); window.scrollTo(0,0); }
 
+/* Setup is re-enterable. Always from the first step: wiz.step survives in
+   memory, so without this a reopen lands on whatever screen was last seen.
+   reopened=true means there is data to come back to, so the wizard shows a
+   way out instead of trapping you for twelve steps. */
+function openSetup(reopened){
+  wiz.step=0; wiz.draft=null; wiz.editIdx=-1; wiz.reopened=!!reopened;
+  S.setupDone=false; save(); go("setup");
+}
+
 var TABS=[
   ["home","Home",'<path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/>'],
   ["holdings","Holdings",'<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/>'],
@@ -875,8 +884,16 @@ function viewHome(){
       " missing from the total above.</div>"));
   }
   if(S.sample){
-    view.appendChild(el('<div class="callout"><strong>This is sample data</strong>, not your portfolio. '+
-      'Clear it from the Data tab when you are ready to enter your own.</div>'));
+    var sc=el('<div class="callout"><strong>This is sample data</strong>, not your portfolio. '+
+      "Clearing it reopens the setup questionnaire.</div>");
+    var scb=el('<button class="btn sm" type="button" style="margin-top:10px">'+
+      "Clear sample and set up</button>");
+    scb.onclick=function(){
+      var keep=S.profile;
+      S=blank(); S.profile=keep; openSetup(false);
+    };
+    sc.appendChild(scb);
+    view.appendChild(sc);
   }
 
   /* Due soon */
@@ -1774,6 +1791,16 @@ function viewData(){
   };
   view.appendChild(impBtn);
 
+  /* reopen setup as a bulk-entry mode */
+  view.appendChild(el('<div class="section-head"><h2>Setup questionnaire</h2></div>'));
+  view.appendChild(el('<div class="note">Reopen it to add several holdings in one sitting, '+
+    "section by section, the way you did at the start. Nothing already entered is touched, "+
+    "and you can close it at any step.</div>"));
+  var reopen=el('<button class="btn ghost wide" type="button" style="margin-top:9px">'+
+    "Reopen the setup questionnaire</button>");
+  reopen.onclick=function(){ openSetup(true); };
+  view.appendChild(reopen);
+
   /* claim guide */
   view.appendChild(el('<div class="section-head"><h2>Reference</h2></div>'));
   var cg=el('<button class="btn ghost wide" type="button">The claim guide</button>');
@@ -1866,7 +1893,7 @@ function viewClaimGuide(){
 /* ============================================================
    14 · First-run setup
    ============================================================ */
-var wiz={step:0, draft:null, editIdx:-1};
+var wiz={step:0, draft:null, editIdx:-1, reopened:false};
 var STEPS=[
   {id:"welcome",title:"Everything in one place",
    blurb:"Set it up once, in one sitting. Eight sections, and you can skip any of them and come back."},
@@ -1908,6 +1935,12 @@ function viewSetup(){
   view.appendChild(wrap);
 }
 
+function closeSetupBtn(){
+  var x=el('<button class="btn ghost" type="button">Close setup</button>');
+  x.onclick=function(){ S.setupDone=true; wiz.reopened=false; save(); go("home"); };
+  return x;
+}
+
 function wizNav(wrap,opts){
   opts=opts||{};
   var f=el('<div class="wizfoot"></div>');
@@ -1916,6 +1949,7 @@ function wizNav(wrap,opts){
     b.onclick=function(){ wiz.step--; wiz.draft=null; wiz.editIdx=-1; render(); };
     f.appendChild(b);
   }
+  if(wiz.reopened) f.appendChild(closeSetupBtn());
   f.appendChild(el('<div class="spacer"></div>'));
   var n=el('<button class="btn" type="button">'+esc(opts.nextLabel||"Continue")+"</button>");
   n.onclick=function(){
@@ -1946,6 +1980,7 @@ function stepWelcome(wrap){
     loadSample(); toast("Sample data loaded — these are not your figures."); go("home");
   };
   f.appendChild(samp);
+  if(wiz.reopened) f.appendChild(closeSetupBtn());
   f.appendChild(el('<div class="spacer"></div>'));
   var n=el('<button class="btn" type="button">Start</button>');
   n.onclick=function(){ wiz.step++; render(); };
@@ -2101,7 +2136,7 @@ function stepDone(wrap){
   f.appendChild(b);
   f.appendChild(el('<div class="spacer"></div>'));
   var n=el('<button class="btn" type="button">Open the app</button>');
-  n.onclick=function(){ S.setupDone=true; save(); go("home"); };
+  n.onclick=function(){ S.setupDone=true; wiz.reopened=false; save(); go("home"); };
   f.appendChild(n);
   wrap.appendChild(f);
 }
